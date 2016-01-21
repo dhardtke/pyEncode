@@ -1,5 +1,5 @@
 # Statement for enabling the development environment
-DEBUG = False
+DEBUG = True
 
 # Define the application directory
 import os
