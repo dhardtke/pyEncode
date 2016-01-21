@@ -14,11 +14,6 @@ from flask import Flask, render_template
 # Import SQLAlchemy
 from flask.ext.sqlalchemy import SQLAlchemy
 
-# Register blueprints
-from app.modules.index.controllers import mod_index
-from app.modules.api.controllers import mod_api
-from app.modules.auth.controllers import mod_auth
-
 # Define the WSGI application object
 app = Flask(__name__)
 
@@ -36,6 +31,10 @@ def not_found(error):
 
 
 # Register blueprint(s)
+from app.modules.index.controllers import mod_index
+from app.modules.api.controllers import mod_api
+from app.modules.auth.controllers import mod_auth
+
 app.register_blueprint(mod_index)
 app.register_blueprint(mod_api)
 app.register_blueprint(mod_auth)
