@@ -7,11 +7,11 @@ TODOs:
 - websockets for js client
 - auth (login/logout)
 """
-
 # Import flask and template operators
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 # Import SQLAlchemy
+from flask.ext.login import LoginManager
 from flask.ext.sqlalchemy import SQLAlchemy
 
 # Define the WSGI application object
@@ -31,9 +31,9 @@ def not_found(error):
 
 
 # Register blueprint(s)
-from app.modules.index.controllers import mod_index
-from app.modules.api.controllers import mod_api
-from app.modules.auth.controllers import mod_auth
+from app.modules.index import mod_index
+from app.modules.api import mod_api
+from app.modules.auth import mod_auth
 
 app.register_blueprint(mod_index)
 app.register_blueprint(mod_api)

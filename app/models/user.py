@@ -17,3 +17,12 @@ class User(Base):
 
     def __repr__(self):
         return '<User %r>' % self.name
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
