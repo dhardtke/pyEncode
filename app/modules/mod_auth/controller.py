@@ -13,9 +13,8 @@ from .models import User
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "auth.login"
-# TODO!!!
-login_manager.login_message = u"Bonvolu ensaluti por uzi tiun paĝon."
-login_manager.login_message_category = "info"
+login_manager.login_message = _("You have to log in to access this page!")
+login_manager.login_message_category = "warning"
 
 
 @login_manager.user_loader
