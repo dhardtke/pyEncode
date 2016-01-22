@@ -1,8 +1,10 @@
+from flask.ext.login import UserMixin
+
 from app import db
 from app.library.base_model import BaseModel
 
 
-class User(BaseModel):
+class User(BaseModel, UserMixin):
     __tablename__ = "users"
 
     username = db.Column(db.String(255), nullable=False)

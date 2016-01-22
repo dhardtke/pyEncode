@@ -2,6 +2,18 @@
 {% block content %}
     <h1>Sign in</h1>
 
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <form method="POST" action="{{ url_for("auth.login") }}" accept-charset="UTF-8" role="form" class="form-horizontal">
         {{ form.csrf_token }}
 
@@ -30,6 +42,14 @@
                         {% for error in form.password.errors %}<p>{{ error }}</p>{% endfor %}
                     </span>
                 {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <div class="checkbox">
+                    <label>{{ form.remember }} {{ form.remember.label.text }}</label>
+                </div>
             </div>
         </div>
 

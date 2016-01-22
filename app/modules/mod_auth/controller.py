@@ -1,6 +1,9 @@
 # Import flask dependencies
+import hashlib
+
 from flask import Blueprint, render_template, flash, request, url_for, redirect
-from flask.ext.login import LoginManager, login_user, login_required, logout_user
+from flask.ext.login import LoginManager, login_user, login_required, logout_user, current_user
+from flask.ext.babel import gettext as _
 
 from app import app
 from .forms import LoginForm
@@ -10,14 +13,14 @@ from .models import User
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "auth.login"
-# TODO
+# TODO!!!
 login_manager.login_message = u"Bonvolu ensaluti por uzi tiun paĝon."
 login_manager.login_message_category = "info"
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(user_id)
+    return User.query.get(user_id)
 
 
 mod_auth = Blueprint("auth", __name__, url_prefix="/auth")
@@ -25,28 +28,26 @@ mod_auth = Blueprint("auth", __name__, url_prefix="/auth")
 
 @mod_auth.route("/login", methods=["GET", "POST"])
 def login():
-    # Here we use a class of some kind to represent and validate our
-    # client-side form data. For example, WTForms is a library that will
-    # handle this for us, and we use a custom LoginForm to validate.
+    # don't allow login when User is logged in already
+    if current_user.is_authenticated:
+        return redirect(url_for("mod_index.index"))
+
     form = LoginForm()
 
     if form.validate_on_submit():
-        # Login and validate the user.
-        # user should be an instance of your `User` class
-        user = User("", "", "")  # TODO
-        login_user(user)
+        user = User.query.filter_by(username=form.username.data, password=hashlib.sha256(form.password.data.encode("utf8")).hexdigest()).first()
 
-        flash("Logged in successfully.")
-
-        next = request.args.get("next")
-
-        return redirect(next or url_for("index"))
+        if user is not None:
+            login_user(user, remember=form.remember.data)
+            return redirect(request.args.get("next") or url_for("mod_index.index"))
+        else:
+            flash(_("Invalid Username or Password. Please try again!"), "error")
 
     return render_template("auth/login.html", form=form)
 
 
-@app.route("/logout")
+@mod_auth.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect("/")
+    return redirect(url_for("mod_auth.login"))
