@@ -12,7 +12,7 @@ from .forms import LoginForm
 # configure Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "auth.login"
+login_manager.login_view = "mod_auth.login"
 login_manager.login_message = _("You have to log in to access this page!")
 login_manager.login_message_category = "warning"
 
@@ -22,7 +22,7 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 
-mod_auth = Blueprint("auth", __name__, url_prefix="/auth")
+mod_auth = Blueprint("mod_auth", __name__, url_prefix="/auth")
 
 
 @mod_auth.route("/login", methods=["GET", "POST"])

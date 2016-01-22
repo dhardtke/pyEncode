@@ -32,17 +32,18 @@
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 {% if current_user.is_anonymous %}
-                    <li{% if request.path == url_for("auth.login") %} class="active"{% endif %}>
-                        <a href="{{ url_for("auth.login") }}">
+                    <li{% if request.path == url_for("mod_auth.login") %} class="active"{% endif %}>
+                        <a href="{{ url_for("mod_auth.login") }}">
                             <i class="fa fa-fw fa-unlock"></i> {{ _("Login") }}
                         </a>
                     </li>
                 {% else %}
-                    <li{% if request.path == "/" %} class="active"{% endif %}>
-                        <a href="{{ url_for("overview") }}">
+                    <li{% if request.path == url_for("mod_index.index") %} class="active"{% endif %}>
+                        <a href="{{ url_for("mod_index.index") }}">
                             <i class="fa fa-fw fa-eye"></i> {{ _("Overview") }}
                         </a>
                     </li>
+                    {#
                     <li{% if request.path == url_for("show_list", which="queue") %} class="active"{% endif %}>
                         <a href="{{ url_for("show_list", which="queue") }}">
                             <i class="fa fa-fw fa-inbox"></i> {{ _("Packages") }}
@@ -53,6 +54,7 @@
                             <i class="fa fa-fw fa-shopping-cart"></i> {{ _("Collector") }}
                         </a>
                     </li>
+                    #}
                 {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -74,6 +76,7 @@
                     </ul>
                 </li>
                 {% if not current_user.is_anonymous %}
+                    {#
                     <li{% if request.path == url_for("settings_page") %} class="active"{% endif %}>
                         <a href="{{ url_for("settings_page") }}">
                             <i class="fa fa-fw fa-cogs"></i> {{ _("Settings") }}
@@ -84,8 +87,9 @@
                             <i class="fa fa-fw fa-file-text-o"></i> {{ _("Log") }}
                         </a>
                     </li>
+                    #}
                     <li>
-                        <a href="{{ url_for("logout") }}">
+                        <a href="{{ url_for("mod_auth.logout") }}">
                             <i class="fa fa-fw fa-lock"></i> {{ _("Logout") }}
                         </a>
                     </li>

@@ -15,13 +15,22 @@ base.js:
     - contents:
       - bower_components/jquery/dist/jquery.min.js
       - bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js
+    - bower_components/sio-client/socket.io.js
   filters:
     - jsmin
   output: packed_base.js
 
+statusbar.js:
+  contents:
+    - js/_socket.js
+    - js/statusbar.js
+  filters:
+    - jsmin
+
 index.js:
     contents:
         - base.js # inherits base
+        - statusbar.js # inherits statusbar.js
         #- js/overview.js
     filters:
         - jsmin

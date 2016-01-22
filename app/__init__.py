@@ -14,6 +14,7 @@ from flask import Flask, render_template, request
 
 # Flask Extensions
 from flask.ext.compress import Compress
+from flask.ext.socketio import SocketIO
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.assets import Environment
 from flask.ext.babel import Babel
@@ -38,6 +39,8 @@ assets.append_path(app.root_path + os.sep + "static", "static")
 db = SQLAlchemy(app)
 babel = Babel(app)
 Compress(app)
+
+socketio = SocketIO(app)
 
 
 @babel.localeselector

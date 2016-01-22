@@ -16,7 +16,8 @@
   "dependencies": {
     "jquery": "~2.2.0",
     "bootstrap-sass": "~3.3.6",
-    "fontawesome": "~4.5.0"
+    "fontawesome": "~4.5.0",
+    "sio-client": "~1.4.4"
   },
   "unused": {
     "sortable": "~0.6.0",
