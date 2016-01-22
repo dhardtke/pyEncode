@@ -8,4 +8,4 @@ mod_index = Blueprint("mod_index", __name__)
 @mod_index.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+    return render_template("index.html", js_name="index.js")

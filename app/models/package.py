@@ -11,10 +11,9 @@ class Package(BaseModel):
 
     # foreign keys
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    
+
     # relationships
-    files = db.relationship("File", backref="package", cascade="all, delete-orphan")
-    user = db.relationship("User", back_populates="packages")
+    user = db.relationship("User", backref="packages", cascade="all, delete-orphan", single_parent=True)
 
     def __repr__(self):
         return "<Package %r>" % self.id
