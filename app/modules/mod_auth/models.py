@@ -1,9 +1,8 @@
-from .base import Base
 from app import db
+from app.library.base_model import BaseModel
 
 
-# Define a User model
-class User(Base):
+class User(BaseModel):
     __tablename__ = "users"
 
     username = db.Column(db.String(255), nullable=False)

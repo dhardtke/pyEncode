@@ -30,12 +30,10 @@ def not_found(error):
 
 
 # Register blueprint(s)
-from app.modules.index import mod_index
-from app.modules.api import mod_api
-from app.modules.auth import mod_auth
+from app.modules.mod_index.controller import mod_index
+from app.modules.mod_auth.controller import mod_auth
 
 app.register_blueprint(mod_index)
-app.register_blueprint(mod_api)
 app.register_blueprint(mod_auth)
 
 # Build the database:

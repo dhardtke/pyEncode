@@ -4,7 +4,7 @@ from flask.ext.login import LoginManager, login_user, login_required, logout_use
 
 from app import app
 from app.forms.login_form import LoginForm
-from app.models.user import User
+from .models import User
 
 # configure Flask-Login
 login_manager = LoginManager()
