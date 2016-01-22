@@ -1,0 +1,8 @@
+label {
+    cursor: pointer;
+}
+
+/* fix for bootstrap's .form-control-feedback not being displayed correctly with font-awesome fonts */
+.form-control-feedback.fa {
+    line-height: 34px !important;
+}

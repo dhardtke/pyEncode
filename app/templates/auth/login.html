@@ -1,36 +1,42 @@
 {% extends "base.html" %}
 {% block content %}
-    <div>
-        <div>
-            <legend>Sign in</legend>
-            {% with errors = get_flashed_messages(category_filter=["error"]) %}
-                {% if errors %}
-                    <div>
-                        {% for error in errors %}
-                            {{ error }}<br>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
+    <h1>Sign in</h1>
 
-            {% if form.errors %}
-                <div>
-                    {% for field, error in form.errors.items() %}
-                        {% for e in error %}
-                            {{ e }}<br>
-                        {% endfor %}
-                    {% endfor %}
-                </div>
-            {% endif %}
-            <form method="POST" action="/auth/login" accept-charset="UTF-8" role="form" class="form-signin">
-                {{ form.csrf_token }}
-                {{ form.email }}
-                {{ form.password }}
-                <button type="submit" class="btn btn-default">
-                    <i class="fa fa-fw fa-check"></i>
-                    Login
-                </button>
-            </form>
+    <form method="POST" action="{{ url_for("auth.login") }}" accept-charset="UTF-8" role="form" class="form-horizontal">
+        {{ form.csrf_token }}
+
+        <div class="form-group{{ " has-feedback has-error" if form.username.errors else "" }}">
+            {{ form.username.label(class="control-label col-sm-2") }}
+
+            <div class="col-sm-10">
+                {{ form.username(class="form-control") }}
+                {% if form.username.errors %}
+                    <span class="fa fa-times form-control-feedback"></span>
+                    <span class="help-block">
+                        {% for error in form.username.errors %}<p>{{ error }}</p>{% endfor %}
+                    </span>
+                {% endif %}
+            </div>
         </div>
-    </div>
+
+        <div class="form-group{{ " has-feedback has-error" if form.password.errors else "" }}">
+            {{ form.password.label(class="control-label col-sm-2") }}
+
+            <div class="col-sm-10">
+                {{ form.password(class="form-control") }}
+                {% if form.password.errors %}
+                    <span class="fa fa-times form-control-feedback"></span>
+                    <span class="help-block">
+                        {% for error in form.password.errors %}<p>{{ error }}</p>{% endfor %}
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-sm-offset-2">
+            <button type="submit" class="btn btn-default">
+                <i class="fa fa-fw fa-check"></i> {{ _("Login") }}
+            </button>
+        </div>
+    </form>
 {% endblock %}

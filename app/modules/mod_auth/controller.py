@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, flash, request, url_for, redirect
 from flask.ext.login import LoginManager, login_user, login_required, logout_user
 
 from app import app
-from app.forms.login_form import LoginForm
+from .forms import LoginForm
 from .models import User
 
 # configure Flask-Login
@@ -23,12 +23,13 @@ def load_user(user_id):
 mod_auth = Blueprint("auth", __name__, url_prefix="/auth")
 
 
-@mod_auth.route('/login', methods=['GET', 'POST'])
+@mod_auth.route("/login", methods=["GET", "POST"])
 def login():
     # Here we use a class of some kind to represent and validate our
     # client-side form data. For example, WTForms is a library that will
     # handle this for us, and we use a custom LoginForm to validate.
     form = LoginForm()
+
     if form.validate_on_submit():
         # Login and validate the user.
         # user should be an instance of your `User` class

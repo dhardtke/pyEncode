@@ -1,0 +1,26 @@
+{
+  "name": "pyEncode",
+  "version": "0.3.0",
+  "homepage": "https://github.com/dhardtke/pyEncode",
+  "authors": [
+    "dhardtke <accounts@pcprofil.de>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.2.0",
+    "bootstrap-sass": "~3.3.6",
+    "fontawesome": "~4.5.0"
+  },
+  "unused": {
+    "sortable": "~0.6.0",
+    "html.sortable": "~0.2.4",
+    "remarkable-bootstrap-notify": "3.1.3"
+  }
+}

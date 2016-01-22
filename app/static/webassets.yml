@@ -1,0 +1,20 @@
+base.css:
+  contents:
+    - css/bootstrap.scss
+    - css/style.css
+    - contents:
+      - bower_components/fontawesome/css/font-awesome.min.css
+  filters:
+    - scss
+    - cssmin
+    - cssrewrite
+  output: packed_base.css
+
+base.js:
+  contents:
+    - contents:
+      - bower_components/jquery/dist/jquery.min.js
+      - bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js
+  filters:
+    - jsmin
+  output: packed_base.js
