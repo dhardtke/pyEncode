@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template
 from flask.ext.login import login_required
 
-mod_index = Blueprint('index', __name__)
+mod_index = Blueprint("mod_index", __name__)
 
 
 @mod_index.route("/")

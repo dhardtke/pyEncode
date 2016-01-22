@@ -7,21 +7,29 @@ TODOs:
 - websockets for js client
 - auth (login/logout)
 """
-# Import flask and template operators
-from flask import Flask, render_template
+import os
 
-# Import SQLAlchemy
+# Import flask and template operators
+from flask import Flask, render_template, request
+
+# Flask Extensions
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.assets import Environment
+from flask.ext.babel import Babel, gettext
 
 # Define the WSGI application object
 app = Flask(__name__)
-
-# Configurations
 app.config.from_object("config")
 
-# Define the database object which is imported
-# by modules and controllers
+assets = Environment(app)
 db = SQLAlchemy(app)
+babel = Babel(app)
+assets.from_yaml(app.root_path + os.sep + "webassets.yml")
+
+
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(app.config['LANGUAGES'].keys())
 
 
 @app.errorhandler(404)

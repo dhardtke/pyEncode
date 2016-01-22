@@ -1,50 +1,36 @@
-{% macro render_field(field) %}
-  <dt>{{ field.label }}
-  <dd>{{ field(**kwargs)|safe }}
-  {% if field.errors %}
-    <ul class=errors>
-    {% for error in field.errors %}
-      <li>{{ error }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-  </dd>
-{% endmacro %}
-
-<div>
+{% extends "base.html" %}
+{% block content %}
     <div>
-        <legend>Sign in</legend>
-        {% with errors = get_flashed_messages(category_filter=["error"]) %}
-            {% if errors %}
+        <div>
+            <legend>Sign in</legend>
+            {% with errors = get_flashed_messages(category_filter=["error"]) %}
+                {% if errors %}
+                    <div>
+                        {% for error in errors %}
+                            {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% if form.errors %}
                 <div>
-                    {% for error in errors %}
-                        {{ error }}<br>
+                    {% for field, error in form.errors.items() %}
+                        {% for e in error %}
+                            {{ e }}<br>
+                        {% endfor %}
                     {% endfor %}
                 </div>
             {% endif %}
-        {% endwith %}
-
-        {% if form.errors %}
-            <div>
-                {% for field, error in form.errors.items() %}
-                    {% for e in error %}
-                        {{ e }}<br>
-                    {% endfor %}
-                {% endfor %}
-            </div>
-        {% endif %}
-        <form method="POST" action="/auth/login" accept-charset="UTF-8" role="form">
-            {{ form.csrf_token }}
-            {{ render_field(form.email, placeholder="Your Email Address",
-                                  autofocus="") }}
-            {{ render_field(form.password, placeholder="Password") }}
-            <div>
-                <label>
-                    <input type="checkbox" name="remember" value="1"> Remember Me
-                </label>
-                <a role="button" href="">Forgot your password?</a><span class="clearfix"></span>
-            </div>
-            <button type="submit" name="submit">Sign in</button>
-        </form>
+            <form method="POST" action="/auth/login" accept-charset="UTF-8" role="form" class="form-signin">
+                {{ form.csrf_token }}
+                {{ form.email }}
+                {{ form.password }}
+                <button type="submit" class="btn btn-default">
+                    <i class="fa fa-fw fa-check"></i>
+                    Login
+                </button>
+            </form>
+        </div>
     </div>
-</div>
+{% endblock %}
