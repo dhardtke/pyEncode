@@ -11,6 +11,9 @@ class User(BaseModel, UserMixin):
     email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
 
+    # relationships
+    packages = db.relationship("Package", back_populates="user")
+
     def __init__(self, name, email, password):
         self.name = name
         self.email = email

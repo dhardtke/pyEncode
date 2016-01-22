@@ -9,10 +9,12 @@ class Package(BaseModel):
     queue = db.Column(db.Boolean())
     position = db.Column(db.Integer())
 
+    # foreign keys
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-
-    # todo user relation
-    files = db.relationship("File", backref="package", cascade="all, delete-orphan", )
+    
+    # relationships
+    files = db.relationship("File", backref="package", cascade="all, delete-orphan")
+    user = db.relationship("User", back_populates="packages")
 
     def __repr__(self):
         return "<Package %r>" % self.id

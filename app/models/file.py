@@ -10,11 +10,11 @@ class File(BaseModel):
     size = db.Column(db.Integer())
     position = db.Column(db.Integer())
 
-    # relations
+    # foreign keys
     package_id = db.Column(db.Integer, db.ForeignKey("packages.id"))
-    process = db.relationship("Process", backref="file", uselist=False, cascade="all, delete-orphan")
 
-    # TODO user relation
+    # relations
+    process = db.relationship("Process", backref="file", uselist=False, cascade="all, delete-orphan")
 
     avconv_pid = db.Column(db.Integer())
     avconv_eta = db.Column(db.Float())  # in seconds so the user can format it
