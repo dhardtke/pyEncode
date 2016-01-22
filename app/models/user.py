@@ -1,7 +1,7 @@
 from flask.ext.login import UserMixin
 
 from app import db
-from app.library.base_model import BaseModel
+from app.models.base_model import BaseModel
 
 
 class User(BaseModel, UserMixin):

@@ -2,12 +2,12 @@
 import hashlib
 
 from flask import Blueprint, render_template, flash, request, url_for, redirect
-from flask.ext.login import LoginManager, login_user, login_required, logout_user, current_user
 from flask.ext.babel import gettext as _
+from flask.ext.login import LoginManager, login_user, login_required, logout_user, current_user
 
 from app import app
+from app.models.user import User
 from .forms import LoginForm
-from .models import User
 
 # configure Flask-Login
 login_manager = LoginManager()
