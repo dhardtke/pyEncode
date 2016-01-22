@@ -18,3 +18,11 @@ base.js:
   filters:
     - jsmin
   output: packed_base.js
+
+index.js:
+    contents:
+        - base.js # inherits base
+        #- js/overview.js
+    filters:
+        - jsmin
+    output: packed_overview.js
