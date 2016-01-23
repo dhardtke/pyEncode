@@ -1,5 +1,5 @@
 $(function () {
-    socket.on("status_changed", function(msg) {
+    socket.on("active_changed", function(msg) {
         // TODO change status
     });
 

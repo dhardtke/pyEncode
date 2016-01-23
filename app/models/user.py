@@ -11,6 +11,19 @@ class User(BaseModel, UserMixin):
     username = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
+    is_admin = db.Column(db.Boolean())
+    language = db.Column(db.String(2))
+
+    # settings below
+    parallel_processes = db.Column(db.Integer())
+    encoding_active = db.Column(db.Boolean())
+
+    encoding_acodec = db.Column(db.String())
+    encoding_strict = db.Column(db.String())
+    encoding_s = db.Column(db.String())
+    encoding_aspect = db.Column(db.String())
+    encoding_preset = db.Column(db.String())
+    encoding_crf = db.Column(db.Integer())
 
     def __init__(self, name, email, password):
         self.name = name
