@@ -81,6 +81,10 @@ app.jinja_env.globals.update(count_processes_active=ProcessRepository.count_proc
 app.jinja_env.globals.update(count_processes_total=ProcessRepository.count_processes_total)
 app.jinja_env.globals.update(encoding_active=ProcessRepository.encoding_active)
 
+# check and start processes when starting app
+if __name__ == "main":
+    ProcessRepository.check_and_start_processes()
+
 
 def get_file_data(file):
     return {
