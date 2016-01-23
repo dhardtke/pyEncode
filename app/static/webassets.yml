@@ -28,10 +28,19 @@ statusbar.js:
     - jsmin
 
 index.js:
-    contents:
-        - base.js # inherits base
-        - statusbar.js # inherits statusbar.js
-        #- js/overview.js
-    filters:
-        - jsmin
-    output: packed_overview.js
+  contents:
+      - base.js # inherits base
+      - statusbar.js # inherits statusbar.js
+      - js/index_table.js
+  filters:
+      - jsmin
+  output: packed_overview.js
+
+index.css:
+  contents:
+    - base.css # inherits base
+    - css/index_table.css
+  filters:
+    - cssmin
+    - cssrewrite
+  output: packed_index.css
