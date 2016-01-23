@@ -76,13 +76,13 @@ class ProcessRepository:
         pass
 
 
-# make functions available in jinja2
-app.jinja_env.globals.update(count_processes_active=ProcessRepository.count_processes_active)
-app.jinja_env.globals.update(count_processes_total=ProcessRepository.count_processes_total)
-app.jinja_env.globals.update(encoding_active=ProcessRepository.encoding_active)
-
-# check and start processes when starting app
 if __name__ == "main":
+    # make functions available in jinja2
+    app.jinja_env.globals.update(count_processes_active=ProcessRepository.count_processes_active)
+    app.jinja_env.globals.update(count_processes_total=ProcessRepository.count_processes_total)
+    app.jinja_env.globals.update(encoding_active=ProcessRepository.encoding_active)
+
+    # check and start processes when starting app
     ProcessRepository.check_and_start_processes()
 
 
