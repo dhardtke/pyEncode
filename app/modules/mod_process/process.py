@@ -1,8 +1,11 @@
 # this class / module serves as a wrapper for the avconv process
 from threading import Thread
-from time import sleep
 
-from app import socketio
+# see https://github.com/miguelgrinberg/Flask-SocketIO/issues/192
+import subprocess
+from eventlet.green.subprocess import Popen
+from eventlet import sleep
+
 from mod_process.process_repository import ProcessRepository
 
 
@@ -13,8 +16,8 @@ class Process(Thread):
 
     def run(self):
         # TODO
-        sleep(5)
+        sleep(1)
+        # instance = Popen(["echo", "hallo"], stdout=subprocess.PIPE, shell=True)
+        # print(instance.communicate())
 
-        # done
-        socketio.emit("file_done",
-                      {"data": {"count_active": ProcessRepository.count_processes_active(), "id": self.file.id}})
+        ProcessRepository.file_done(self.file)

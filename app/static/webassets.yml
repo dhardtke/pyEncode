@@ -20,27 +20,46 @@ base.js:
     - jsmin
   output: packed_base.js
 
-statusbar.js:
+_statusbar.js:
   contents:
     - js/_socket.js
-    - js/statusbar.js
+    - js/_statusbar.js
   filters:
     - jsmin
 
 index.js:
   contents:
-      - base.js # inherits base
-      - statusbar.js # inherits statusbar.js
-      - js/index_table.js
+    - base.js # inherit
+    - _statusbar.js # inherit
+    - js/index.js
   filters:
-      - jsmin
+    - jsmin
   output: packed_overview.js
 
 index.css:
   contents:
     - base.css # inherits base
-    - css/index_table.css
+    - css/index.css
   filters:
     - cssmin
     - cssrewrite
   output: packed_index.css
+
+list.js:
+    contents:
+      - base.js # inherits base
+      - js/list.js
+      #- contents: # do not minify the following assets again
+      #  - bower_components/html.sortable/dist/html.sortable.min.js
+    filters:
+      - jsmin
+    output: packed_list.js
+
+list.css:
+    contents:
+      - base.css # inherits base
+      - css/list.css
+    filters:
+      - cssmin
+      - cssrewrite
+    output: packed_list.css

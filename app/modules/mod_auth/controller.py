@@ -42,7 +42,7 @@ def login():
         else:
             flash(_("Invalid Username or Password. Please try again!"), "error")
 
-    return render_template("auth/login.html", form=form)
+    return render_template("auth/login.html", form=form, title=_("Login"))
 
 
 @mod_auth.route("/logout")

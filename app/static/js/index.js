@@ -29,6 +29,7 @@ $(function () {
 
     // listen to the "file_done" event - this happens, whenever a file is finished processing
     socket.on("file_done", function(msg) {
+        alert("done?");
         var $file = $overview.find("tr[data-file-id='" + msg.data.id + "']");
 
         if ($file.length != 0) {
@@ -39,5 +40,5 @@ $(function () {
     });
 
     // at the beginning we need to initially load all the files
-    socket.emit("file_progress", {});
+    // socket.emit("file_progress", {});
 });

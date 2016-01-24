@@ -1,12 +1,3 @@
-"""
-TODOs:
-- Web-API fuer kommunikation
-- config
-- i18n
-- models
-- websockets for js client
-- auth (login/logout)
-"""
 import os
 
 # Import flask and template operators
@@ -56,9 +47,11 @@ def not_found(error):
 # Register blueprint(s)
 from app.modules.mod_index.controller import mod_index
 from app.modules.mod_auth.controller import mod_auth
+from app.modules.mod_list.controller import mod_list
 
 app.register_blueprint(mod_index)
 app.register_blueprint(mod_auth)
+app.register_blueprint(mod_list)
 
 # Build the database
 db.create_all()

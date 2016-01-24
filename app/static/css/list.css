@@ -1,0 +1,108 @@
+.package {
+    padding-bottom: 5px;
+}
+
+.package .heading {
+    width: 100%;
+}
+
+.package .heading {
+    display: block;
+    text-decoration: none;
+    width: 100%;
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+.package .heading .actions a {
+    text-decoration: none;
+    color: gray;
+}
+
+.package .heading .actions a:hover {
+    color: #428BCA;
+}
+
+.package .heading .name {
+    font-weight: bold;
+}
+
+.package .heading .actions {
+    float: right;
+}
+
+.package .progress {
+    margin-bottom: 5px;
+    position: relative;
+}
+
+.package .progress .progress-bar {
+    position: absolute;
+}
+
+.package .trigger {
+    cursor: move;
+}
+
+.package .progress > span {
+    text-shadow: 1px 1px 2px #000000;
+    position: relative;
+    color: white;
+    margin-left: 5px;
+}
+
+.package .mainlist {
+    margin-left: 10px;
+}
+
+.package .mainlist .info {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.package .mainlist .file {
+    border-top: 1px solid #D3D3D3;
+    padding-top: 5px;
+}
+
+.package .mainlist .file .status {
+    font-weight: normal;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.package .mainlist .sub {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.package .mainlist .sub a {
+    text-decoration: none;
+}
+
+.package .filename {
+    font-size: 13px;
+    font-weight: bold;
+    word-wrap: break-word;
+}
+
+ol {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+li.sortable-placeholder {
+    border: 1px dashed #CCC;
+    background: none;
+}
+
+/* responsivity */
+@media (max-width: 524px) {
+    .package .heading .actions .text {
+        display: none;
+    }
+
+    .package .heading .actions i {
+        font-size: 1.25em;
+    }
+}

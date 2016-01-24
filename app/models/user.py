@@ -15,9 +15,6 @@ class User(BaseModel, UserMixin):
     language = db.Column(db.String(2))
 
     # settings below
-    parallel_processes = db.Column(db.Integer())
-    encoding_active = db.Column(db.Boolean())
-
     encoding_acodec = db.Column(db.String())
     encoding_strict = db.Column(db.String())
     encoding_s = db.Column(db.String())

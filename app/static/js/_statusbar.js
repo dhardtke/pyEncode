@@ -1,6 +1,7 @@
 $(function () {
     var $toggleBtn = $("#toggle-status-btn");
     var $countActive = $("#count-processes-active");
+    var $countQueued = $("#count-processes-queued");
     var $countTotal = $("#count-processes-total");
 
     socket.on("active_changed", function (msg) {
@@ -21,11 +22,18 @@ $(function () {
     // TODO file_deleted event
 
     socket.on("file_done", function (msg) {
+        alert("file done");
+        console.log(msg);
+        /*
         $countActive.html(msg.data.count_active);
+        $countQueued.html(msg.data.count_queued);
+        $countTotal.html(msg.data.count_total);
+        */
     });
 
     socket.on("file_started", function (msg) {
         $countActive.html(msg.data.count_active);
+        $countQueued.html(msg.data.count_queued);
     });
 
     $toggleBtn.on("click", function (e) {

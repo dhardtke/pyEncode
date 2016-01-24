@@ -43,18 +43,16 @@
                             <i class="fa fa-fw fa-eye"></i> {{ _("Overview") }}
                         </a>
                     </li>
-                    {#
-                    <li{% if request.path == url_for("show_list", which="queue") %} class="active"{% endif %}>
-                        <a href="{{ url_for("show_list", which="queue") }}">
+                    <li{% if request.path == url_for("mod_list.show", which="queue") %} class="active"{% endif %}>
+                        <a href="{{ url_for("mod_list.show", which="queue") }}">
                             <i class="fa fa-fw fa-inbox"></i> {{ _("Packages") }}
                         </a>
                     </li>
-                    <li{% if request.path == url_for("show_list", which="collector") %} class="active"{% endif %}>
-                        <a href="{{ url_for("show_list", which="collector") }}">
+                    <li{% if request.path == url_for("mod_list.show", which="collector") %} class="active"{% endif %}>
+                        <a href="{{ url_for("mod_list.show", which="collector") }}">
                             <i class="fa fa-fw fa-shopping-cart"></i> {{ _("Collector") }}
                         </a>
                     </li>
-                    #}
                 {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -109,7 +107,7 @@
                 <div class="btn-toolbar">
                     <div class="btn-group text-center">
                         <button class="btn btn-default btn-sm" disabled>
-                            <span id="count-processes-active">{{ count_processes_active() }}</span> / <span id="count-processes-total">{{ count_processes_total() }}</span>
+                            <span id="count-processes-active" title="{{ _("Active") }}">{{ count_processes_active() }}</span> / <span id="count-processes-queued" title="{{ _("Queued") }}">{{ count_processes_queued() }}</span> / <span id="count-processes-total" title="{{ _("Total") }}">{{ count_processes_total() }}</span>
                         </button>
                         <button class="btn btn-{% if not encoding_active() %}danger{% else %}success{% endif %} btn-sm control" id="toggle-status-btn">
                             <i class="fa fa-info"></i>&nbsp;
