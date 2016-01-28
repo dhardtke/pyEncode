@@ -98,10 +98,3 @@ class ProcessRepository:
                 "count_total": ProcessRepository.count_processes_total(),
             }
         })
-
-
-# make functions available in jinja2
-app.jinja_env.globals.update(count_processes_active=ProcessRepository.count_processes_active)
-app.jinja_env.globals.update(count_processes_queued=ProcessRepository.count_processes_queued)
-app.jinja_env.globals.update(count_processes_total=ProcessRepository.count_processes_total)
-app.jinja_env.globals.update(encoding_active=lambda: ProcessRepository.encoding_active)

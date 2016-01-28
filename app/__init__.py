@@ -48,10 +48,20 @@ def not_found(error):
 from app.modules.mod_index.controller import mod_index
 from app.modules.mod_auth.controller import mod_auth
 from app.modules.mod_list.controller import mod_list
+from app.modules.mod_statusbar.controller import mod_statusbar
 
 app.register_blueprint(mod_index)
 app.register_blueprint(mod_auth)
 app.register_blueprint(mod_list)
+app.register_blueprint(mod_statusbar)
 
 # Build the database
 db.create_all()
+
+# register common jinja2 functions
+# TODO find a better place where to place these functions
+from mod_process.process_repository import ProcessRepository
+app.jinja_env.globals.update(count_processes_active=ProcessRepository.count_processes_active)
+app.jinja_env.globals.update(count_processes_queued=ProcessRepository.count_processes_queued)
+app.jinja_env.globals.update(count_processes_total=ProcessRepository.count_processes_total)
+app.jinja_env.globals.update(encoding_active=lambda: ProcessRepository.encoding_active)

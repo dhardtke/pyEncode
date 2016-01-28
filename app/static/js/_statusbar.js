@@ -39,6 +39,6 @@ $(function () {
     $toggleBtn.on("click", function (e) {
         e.preventDefault();
 
-        $.post("/toggle");
+        $.post("/statusbar/toggle");
     });
 });
