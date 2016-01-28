@@ -2,6 +2,14 @@ $(function () {
     var $overview = $("#overview");
     var $template = $("#template").find("> tbody > *");
 
+    function addFileToDOM(data) {
+        var $file = $template.clone().appendTo("#overview > tbody").fadeIn("slow");
+        $file.attr("data-file-id", data.id);
+        $file.find(".filename").html(data.filename);
+
+        return $file;
+    }
+
     function setProgress($file, value) {
         var $progressBar = $file.parent().find(".progress-bar");
 
@@ -10,13 +18,17 @@ $(function () {
     }
 
     socket.on("file_added", function(msg) {
-        var $file = $template.clone().appendTo("#overview > tbody").fadeIn("slow");
-        $file.attr("data-file-id", msg.data.id);
-        $file.find(".filename").html(msg.data.filename);
+        addFileToDOM(msg.data);
     });
 
     socket.on("file_progress", function (msg) {
         var $file = $overview.find("tr[data-file-id='" + msg.data.id + "']");
+
+        // add file if it does not yet exist
+        if ($file.length == 0) {
+            $file = addFileToDOM(msg.data);
+        }
+
         $file.find(".progress-bar").removeAttr("style");
 
         $file.find(".additional_info").html(msg.data.fps + " fps");
@@ -38,7 +50,4 @@ $(function () {
             })
         }
     });
-
-    // at the beginning we need to initially load all the files
-    // socket.emit("file_progress", {});
 });

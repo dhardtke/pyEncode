@@ -1,6 +1,4 @@
-import os
-
-from app import socketio, db, app
+from app import socketio, db
 from app.library.formatters import formatted_file_data
 from app.models.file import File
 from app.models.package import Package
