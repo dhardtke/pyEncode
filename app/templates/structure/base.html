@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="{{ get_locale }}">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="shortcut icon" href="/static/favicon.ico"/>
+
+    <title>{% if title is defined %}{{ title }}{% else %}pyEncode{% endif %}</title>
+
+    {% assets (css_name if css_name else "base.css") %}
+        <link rel="stylesheet" href="{{ ASSET_URL }}"/>
+    {% endassets %}
+
+    {% assets (js_name if js_name else "base.js") %}
+        <script src="{{ ASSET_URL }}" async></script>
+    {% endassets %}
+</head>
+<body>
+{% include "structure/menu.html" %}
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+{% include "structure/statusbar.html" %}
+</body>
+</html>
