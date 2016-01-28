@@ -11,22 +11,22 @@
 						<span class="actions">
 							<a href="#" class="delete">
 								<span class="text-danger">
-									<i class="fa fa-trash-o"></i> <span class="text">{{ _("Delete") }}</span>
+									<i class="fa fa-trash-o"></i> {{ _("Delete") }}
 								</span>
                             </a> |
 							<a href="#" class="edit">
 								<span class="text-info">
-									<i class="fa fa-pencil-square-o"></i> <span class="text">{{ _("Edit") }}</span>
+									<i class="fa fa-pencil-square-o"></i> {{ _("Edit") }}
 								</span>
-							</a> |
+                            </a> |
 							<a href="#" class="restart">
 								<span class="text-primary">
-									<i class="fa fa-repeat"></i> <span class="text">{{ _("Restart") }}</span>
+									<i class="fa fa-repeat"></i> {{ _("Restart") }}
 								</span>
                             </a> |
 							<a href="#" class="move">
 								<span class="text-success">
-									<i class="fa fa-reply"></i> <span class="text">{{ _("Move") }}</span>
+									<i class="fa fa-reply"></i> {{ _("Move") }}
 								</span>
                             </a>
 						</span>
@@ -36,34 +36,33 @@
                         <span>{{ package.files_finished }} / {{ package.files_total }} {{ _("files") }}</span>
                     </div>
                     <ol class="mainlist collapse" id="package{{ package.id }}">
-                        <!--
-						<div class="info">
-							{{ _("Total size") }}: <strong>{{ package.totalSize }}</strong>
+						<!--<div class="info">
+							{{ _("Total size") }}: <strong>{{ package.size }}</strong>
 						</div>-->
                         {% for file in package.files %}
                             <li class="file" data-fileId="{{ file.id }}">
                                 <div class="row">
                                     {% if file.status == StatusMap.queued.value %}
-                                        {% set textClass = "text-muted" %}
-                                        {% set iconClass = "fa-clock-o" %}
-                                        {% set statusText = _("Queued") %}
+                                        {% set text_class = "text-muted" %}
+                                        {% set icon_class = "fa-clock-o" %}
+                                        {% set status_text = _("Queued") %}
                                     {% elif file.status == StatusMap.failed.value %}
-                                        {% set textClass = "text-danger" %}
-                                        {% set iconClass = "fa-times" %}
-                                        {% set statusText = _("Failed") %}
-                                    {% elif file.status == StatusMap.queued.value %}
-                                        {% set textClass = "text-info" %}
-                                        {% set iconClass = "fa-film" %}
-                                        {% set statusText = _("Processing") %}
+                                        {% set text_class = "text-danger" %}
+                                        {% set icon_class = "fa-times" %}
+                                        {% set status_text = _("Failed") %}
+                                    {% elif file.status == StatusMap.processing.value %}
+                                        {% set text_class = "text-info" %}
+                                        {% set icon_class = "fa-film" %}
+                                        {% set status_text = _("Processing") %}
                                     {% elif file.status == StatusMap.finished.value %}
-                                        {% set textClass = "text-success" %}
-                                        {% set iconClass = "fa-check" %}
-                                        {% set statusText = _("Finished") %}
+                                        {% set text_class = "text-success" %}
+                                        {% set icon_class = "fa-check" %}
+                                        {% set status_text = _("Finished") %}
                                     {% endif %}
-                                    <div class="col-lg-2 {{ textClass }} status">
-                                        <i class="fa {{ iconClass }} {{ textClass }} trigger"></i>
+                                    <div class="col-lg-2 {{ text_class }} status">
+                                        <i class="fa {{ icon_class }} {{ text_class }} trigger"></i>
                                         <!-- dragging trigger -->
-                                        {{ statusText }}
+                                        {{ status_text }}
                                     </div>
                                     <div class="col-lg-10 filename">
                                         {{ file.filename }}
@@ -72,15 +71,15 @@
                                 <div class="sub">
                                     <div class="row">
                                         <div class="col-lg-2 actions">
-                                            <a href="javascript:;" class="delete">
-											<span class="text-danger">
-												<i class="fa fa-trash-o"></i> {{ _("Delete") }}
-											</span>
+                                            <a href="#" class="delete">
+                                                <span class="text-danger">
+                                                    <i class="fa fa-trash-o"></i> {{ _("Delete") }}
+                                                </span>
                                             </a>
-                                            <a href="javascript:;" class="restart">
-											<span class="text-primary">
-												<i class="fa fa-repeat"></i> {{ _("Restart") }}
-											</span>
+                                            <a href="#" class="restart">
+                                                <span class="text-primary">
+                                                    <i class="fa fa-repeat"></i> {{ _("Restart") }}
+                                                </span>
                                             </a>
                                         </div>
                                         <div class="col-lg-2">
@@ -102,8 +101,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span
-                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">Close</span></button>
                     <h4 class="modal-title">{{ _("Delete Package") }}</h4>
                 </div>
                 <div class="modal-body">
@@ -125,8 +123,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span
-                            aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">Close</span></button>
                     <h4 class="modal-title">{{ _("Restart Package") }}</h4>
                 </div>
                 <div class="modal-body">
