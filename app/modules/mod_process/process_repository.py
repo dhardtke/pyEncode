@@ -48,12 +48,11 @@ class ProcessRepository:
             file.status = StatusMap.processing.value
             db.session.commit()
 
-            # emit events
-            file_data = formatted_file_data(file)
-            socketio.emit("file_added", {"data": {"id": file.id, "filename": file_data["filename"]}})
-            socketio.emit("file_started", {"data": {"count_active": ProcessRepository.count_processes_active(),
-                                                    "count_queued": ProcessRepository.count_processes_queued()}})
-            socketio.emit("file_progress", {"data": file_data})
+            # emit file_started event
+            data = formatted_file_data(file)
+            data.count_active = ProcessRepository.count_processes_active()
+            data.count_queued = ProcessRepository.count_processes_queued()
+            socketio.emit("file_started", {"data": data})
 
     @staticmethod
     def count_processes_active():

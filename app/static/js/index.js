@@ -2,6 +2,11 @@ $(function () {
     var $overview = $("#overview");
     var $template = $("#template").find("> tbody > *");
 
+    /**
+     * add a new file to the DOM
+     * @param data the file's data
+     * @returns {*|{opacity}} the newly created file in the DOM
+     */
     function addFileToDOM(data) {
         var $file = $template.clone().appendTo("#overview > tbody").fadeIn("slow");
         $file.attr("data-file-id", data.id);
@@ -10,6 +15,27 @@ $(function () {
         return $file;
     }
 
+    /**
+     * set the file data of an existing file
+     * @param $file
+     * @param data
+     */
+    function setFileData($file, data) {
+        $file.find(".progress-bar").removeAttr("style");
+
+        $file.find(".additional_info").html(data.fps + " fps");
+        $file.find(".eta").html(data.eta);
+        $file.find(".bitrate").html(data.bitrate + " kbits/s");
+        $file.find(".status").html(data.progress + "% / " + data.size);
+
+        setProgress($file, data.progress);
+    }
+
+    /**
+     * set a new progress bar value for a given file
+     * @param $file
+     * @param value
+     */
     function setProgress($file, value) {
         var $progressBar = $file.parent().find(".progress-bar");
 
@@ -17,35 +43,24 @@ $(function () {
         $progressBar.find("span").html(value + "%");
     }
 
-    socket.on("file_added", function(msg) {
-        addFileToDOM(msg.data);
+    socket.on("file_started", function (msg) {
+        var $file = addFileToDOM(msg.data);
+        setFileData($file, msg.data);
     });
 
     socket.on("file_progress", function (msg) {
         var $file = $overview.find("tr[data-file-id='" + msg.data.id + "']");
 
-        // add file if it does not yet exist
-        if ($file.length == 0) {
-            $file = addFileToDOM(msg.data);
-        }
-
-        $file.find(".progress-bar").removeAttr("style");
-
-        $file.find(".additional_info").html(msg.data.fps + " fps");
-        $file.find(".eta").html(msg.data.eta);
-        $file.find(".bitrate").html(msg.data.bitrate + " kbits/s");
-        $file.find(".status").html(msg.data.progress + "% / " + msg.data.size);
-
-        setProgress($file, msg.data.progress);
+        setFileData($file, msg.data);
     });
 
     // listen to the "file_done" event - this happens, whenever a file is finished processing
-    socket.on("file_done", function(msg) {
+    socket.on("file_done", function (msg) {
         alert("done?");
         var $file = $overview.find("tr[data-file-id='" + msg.data.id + "']");
 
         if ($file.length != 0) {
-            $file.fadeOut("slow", function() {
+            $file.fadeOut("slow", function () {
                 $(this).remove();
             })
         }
