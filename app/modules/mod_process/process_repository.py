@@ -69,10 +69,6 @@ class ProcessRepository:
         return Package.query.filter_by(queue=True).join(File).count()
         # TODO
 
-    @staticmethod
-    def add_process(file):
-        pass
-
     # file_done() will be called whenever a Process is finished
     @staticmethod
     def file_done(file):
