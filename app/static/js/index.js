@@ -43,18 +43,26 @@ $(function () {
         $progressBar.find("span").html(value + "%");
     }
 
+    /**
+     * initially add a file whenever we receive the "file_started" event
+     */
     socket.on("file_started", function (msg) {
         var $file = addFileToDOM(msg.data);
         setFileData($file, msg.data);
     });
 
+    /**
+     * update a file in the DOM whenever we receive the "file_progress" event
+     */
     socket.on("file_progress", function (msg) {
         var $file = $overview.find("tr[data-file-id='" + msg.data.id + "']");
 
         setFileData($file, msg.data);
     });
 
-    // listen to the "file_done" event - this happens, whenever a file is finished processing
+    /**
+     * remove a file whenever we receive the "file_done" event
+     */
     socket.on("file_done", function (msg) {
         alert("done?");
         var $file = $overview.find("tr[data-file-id='" + msg.data.id + "']");
