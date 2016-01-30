@@ -14,12 +14,39 @@
     {% assets (js_name if js_name else "base.js") %}
         <script src="{{ ASSET_URL }}" async></script>
     {% endassets %}
+
+    <script>
+        var currentPath = "{{ '/filemanager' + path if path else '' }}";
+
+        var lang = {
+            success: "{{ _('Success') }}",
+            process_cancel_success: "{{ _('The processes were cancelled successfully.') }}",
+            error: "{{ _('Error') }}",
+            warning: "{{ _('Warning') }}",
+            not_all_fields_filled: "{{ _('Not all required fields were filled!') }}",
+            package_added_successfully: "{{ _('The package was added successfully.') }}",
+            duplicate_file_error: "{{ _('At least one file was added already!') }}",
+            at_least_one_file_not_existing: "{{ _('At least one file does not exist!') }}",
+            deleting_package_successful: "{{ _('The package has been deleted successfully.') }}",
+            moving_package_successful: "{{ _('The package has been moved successfully.') }}",
+            cant_open_folder: "{{ _('Can\'t open that folder!') }}",
+            is_already_in_list: "{{ _('is already in your list!') }}",
+            unknown_error_occured: "{{ _('An unknown error occured!') }}",
+            file_has_been_added_successfully: "{{ _('The file has been added successfully.') }}",
+            files_were_added_successfully: "{{ _('The files were added successfully.') }}",
+            "remove_from_list": "{{ _('Remove from list') }}"
+        }
+    </script>
 </head>
-<body>
-{% include "structure/menu.html" %}
+<body{% if filemanager is defined %} class="filemanager"{% endif %}>
+{% if not filemanager is defined %}
+    {% include "structure/menu.html" %}
+{% endif %}
 <div class="container">
     {% block content %}{% endblock %}
 </div>
-{% include "structure/statusbar.html" %}
+{% if not current_user.is_anonymous and not filemanager is defined %}
+    {% include "structure/statusbar.html" %}
+{% endif %}
 </body>
 </html>

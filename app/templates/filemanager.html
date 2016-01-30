@@ -1,0 +1,129 @@
+{% extends "structure/base.html" %}
+{% block content %}
+    <div class="main">
+        <ol id="breadcrumb" class="breadcrumb" style="margin-bottom: 5px;">
+            {% set current = "/" %}
+            {% for breadcrumb in breadcrumbs %}
+                <li{{ ' class="active"'|safe if loop.last else '' }}>
+                    {% if not loop.last %}
+                        <a href="/filemanager{{ "/" if not loop.first }}{{ breadcrumb.path }}" class="ajax_path">{{ breadcrumb.name }}</a>
+                    {% else %}
+                        {{ breadcrumb.name }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+            <li class="pull-right badge">
+                {{ files|length }} {{ _("Items") }}
+            </li>
+        </ol>
+        <div class="col-sm-6">
+            <div class="input-group">
+                {% if not path == "/" %}
+                    <span class="input-group-addon" style="padding: 2px 5px">
+					<a href="/filemanager{{ parent_path }}" class="ajax_path" title="{{ _('Back') }}">
+                        <i class="fa fa-arrow-circle-left fa-2x"></i>
+                    </a>
+				</span>
+                {% endif %}
+                <input type="text" class="form-control" id="jumpbox" placeholder="{{ _("Go to...") }}"/>
+				<span class="input-group-btn">
+					<button class="btn btn-primary" type="button" id="jumpboxBtn">{{ _("Go!") }}</button>
+				</span>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="text" class="form-control" id="filter" placeholder="{{ _("Filter...") }}"
+                       value="{{ filter }}"/>
+				<span class="input-group-btn">
+					<button class="btn btn-primary" type="button" id="filterBtn">{{ _("Filter!") }}</button>
+				</span>
+            </div>
+        </div>
+        <table id="filemanager" class="table table-hover table-condensed" data-sortable>
+            <thead>
+            <tr class="unselectable" rowspan="2">
+                <th class="unselectable">{{ _("Type") }}</th>
+                <th class="unselectable" data-defaultsort="desc">{{ _("Filename") }}</th>
+                <th class="unselectable">{{ _("File Size") }}</th>
+                <th class="unselectable">{{ _("Last Change") }}</th>
+                {% if config["general"]["show_resolution"] == "True" %}
+                    <th class="unselectable resolution_head">{{ _("Resolution") }}</th>
+                {% endif %}
+                <th data-sortable="false"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for file in files %}
+                <tr>
+                    <td class="text-center" data-value="{{ file['extension'] }}">
+                        {% if file["type"] == "file" %}
+                            <i class="fa fa-fw fa-play-circle"></i> {{ file["extension"].upper() }}
+                        {% else %}
+                            {{ _("Folder") }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if file["type"] == "file" %}
+                            <i class="fa fa-fw fa-file-video-o"></i>
+                            <a href="#" data-filepath="{{ file['path'] }}" class="add_file" title="{{ _('Add File') }}">
+                                {{ file["name"] }}
+                            </a>
+                        {% else %}
+                            <i class="fa fa-fw fa-folder-o"></i>
+                            <a href="/filemanager{{ file['path'] }}" class="ajax_path" title="{{ _('Open Folder') }}">
+                                {{ file["name"] }}
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td data-value="{{ file['size_raw'] }}">
+                        {{ file["size"] }}
+                    </td>
+                    <td data-value="{{ file['modified_raw'] }}">
+                        {{ file["modified"] }}
+                    </td>
+                    {% if config["general"]["show_resolution"] == "True" %}
+                        <td class='resolution'>
+                            {% if file["type"] == "file" %}
+                                <i class='fa fa-circle-o-notch fa-spin'></i>
+                            {% else %}
+                                --
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                    <td data-value='1'>
+                        {% if file["type"] == "folder" %}
+                            <input type="checkbox" disabled="disabled"/>
+                        {% else %}
+                            <input type="checkbox"/>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="5">
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-primary btn-xs" onclick="_select_all();">
+                            {{ _("Select all") }}
+                        </button>
+                        <button type="button" class="btn btn-primary btn-xs" onclick="_select_none();">
+                            {{ _("Remove selection") }}
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-info btn-xs" onclick="add_multiple();">
+                            {{ _("Add selection") }}
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+{% endblock %}

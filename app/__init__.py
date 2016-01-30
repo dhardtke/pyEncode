@@ -49,11 +49,13 @@ from app.modules.mod_index.controller import mod_index
 from app.modules.mod_auth.controller import mod_auth
 from app.modules.mod_list.controller import mod_list
 from app.modules.mod_statusbar.controller import mod_statusbar
+from app.modules.mod_filemanager.controller import mod_filemanager
 
 app.register_blueprint(mod_index)
 app.register_blueprint(mod_auth)
 app.register_blueprint(mod_list)
 app.register_blueprint(mod_statusbar)
+app.register_blueprint(mod_filemanager)
 
 # Build the database
 db.create_all()

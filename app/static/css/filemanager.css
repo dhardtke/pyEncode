@@ -1,0 +1,17 @@
+body.filemanager {
+    border-top: 1px solid #A1A1A1;
+}
+
+body.filemanager .container {
+    width: 95%;
+}
+
+body.filemanager, body.filemanager .main {
+    padding-top: 5px;
+}
+
+/* override bootstrap breadcrumb symbol */
+#breadcrumb .badge:before {
+    content: "" !important;
+    padding: 0 !important;
+}

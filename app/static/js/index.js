@@ -73,4 +73,12 @@ $(function () {
             })
         }
     });
+
+    /**
+     * empty the file list whenever we connect to the server
+     * TODO find a way not to do this when switching between pages
+     */
+    socket.on("disconnect", function(msg) {
+        $overview.find("tbody > *").remove();
+    })
 });

@@ -1,30 +1,81 @@
-{% if not current_user.is_anonymous %}
-    <div class="navbar navbar-fixed-bottom navbar-default" role="navigation">
-        <div class="container">
-            <div style="margin: 15px 0 15px 15px;">
-                <div class="btn-toolbar">
-                    <div class="btn-group text-center">
-                        <button class="btn btn-default btn-sm" disabled>
-                            <span id="count-processes-active" title="{{ _("Active") }}">{{ count_processes_active() }}</span> / <span id="count-processes-queued" title="{{ _("Queued") }}">{{ count_processes_queued() }}</span> / <span id="count-processes-total" title="{{ _("Total") }}">{{ count_processes_total() }}</span>
-                        </button>
-                        <button class="btn btn-{% if not encoding_active() %}danger{% else %}success{% endif %} btn-sm control" id="toggle-status-btn">
-                            <i class="fa fa-info"></i>&nbsp;
-                            <span class="{% if not encoding_active() %}hidden{% endif %}" data-which="1">{{ _("Activated") }}</span>
-                            <span class="{% if encoding_active() %}hidden{% endif %}" data-which="0">{{ _("Deactivated") }}</span>
-                        </button>
-                    </div>
-                    <div class="btn-group text-center">
-                        <button id="add-package-btn" class="btn btn-primary btn-sm">
-                            <i class="fa fa-film"></i> <span>&nbsp;{{ _("Add Package") }}</span>
-                        </button>
-                    </div>
-                    <div class="btn-group text-center">
-                        <button class="btn btn-info btn-sm">
-                            <i class="fa fa-ban"></i> <span>{{ _("Cancel current processes") }}</span>
-                        </button>
-                    </div>
+<div class="navbar navbar-fixed-bottom navbar-default" role="navigation">
+    <div class="container">
+        <div style="margin: 15px 0 15px 15px;">
+            <div class="btn-toolbar">
+                <div class="btn-group text-center">
+                    <button class="btn btn-default btn-sm" disabled>
+                        <span id="count-processes-active" title="{{ _("Active") }}">{{ count_processes_active() }}</span> / <span id="count-processes-queued" title="{{ _("Queued") }}">{{ count_processes_queued() }}</span> / <span id="count-processes-total" title="{{ _("Total") }}">{{ count_processes_total() }}</span>
+                    </button>
+                    <button class="btn btn-{% if not encoding_active() %}danger{% else %}success{% endif %} btn-sm control" id="toggle-status-btn">
+                        <i class="fa fa-info"></i>&nbsp;
+                        <span class="{% if not encoding_active() %}hidden{% endif %}" data-which="1">{{ _("Activated") }}</span>
+                        <span class="{% if encoding_active() %}hidden{% endif %}" data-which="0">{{ _("Deactivated") }}</span>
+                    </button>
+                </div>
+                <div class="btn-group text-center">
+                    <button id="add-package-btn" class="btn btn-primary btn-sm">
+                        <i class="fa fa-film"></i> <span>&nbsp;{{ _("Add Package") }}</span>
+                    </button>
+                </div>
+                <div class="btn-group text-center">
+                    <button class="btn btn-info btn-sm">
+                        <i class="fa fa-ban"></i> <span>{{ _("Cancel current processes") }}</span>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-{% endif %}
+</div>
+
+<div class="modal fade" id="add-package-modal" tabindex="-1" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">{{ _("Add Package") }}</h4>
+            </div>
+            <form class="form-horizontal" role="form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="title" class="col-sm-2 control-label">{{ _("Package Name") }}:</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="title" placeholder="{{ _("Nice movie to process") }}" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="filenames" class="col-sm-2 control-label">{{ _("File Path(s)") }}:</label>
+                        <div class="col-sm-10">
+                            <ul id="filenames" style="min-height: 25px; word-wrap: break-word;"></ul>
+                            <a href="#" class="btn btn-info btn-sm col-xs-12" id="browse-btn">{{ _("Browse") }}</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="target" class="col-sm-2 control-label">{{ _("Target") }}:</label>
+                        <div class="col-sm-10">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="target" id="target_queue" value="1" checked="checked" />
+                                    {{ _("Queue") }}
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="target" id="target_collector" value="0" />
+                                    {{ _("Collector") }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <i class="fa fa-ban fa-fw"></i> {{ _("Cancel") }}
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa fa-fw fa-plus"></i> {{ _("Add") }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
