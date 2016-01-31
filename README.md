@@ -1,5 +1,6 @@
 pyEncode
 ============
+[![wercker status](https://app.wercker.com/status/bb64a538d69c241f7b4c25c32b2d1a92/m "wercker status")](https://app.wercker.com/project/bykey/bb64a538d69c241f7b4c25c32b2d1a92)
 
 pyEncode is a wrapper for the audio and video processor avconv (TODO link).
 
