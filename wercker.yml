@@ -1,4 +1,4 @@
-box: wercker/python
+box: python:3.5.1
 build:
   steps:
     - pip-install
