@@ -1,5 +1,5 @@
 from app.models.file import File
-from mod_process.status_map import StatusMap
+from app.modules.mod_process.status_map import StatusMap
 
 
 class FileRepository:

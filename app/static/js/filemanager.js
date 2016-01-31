@@ -100,7 +100,7 @@ function load(path) {
             $("#jumpbox").val("");
 
             // update URL bar
-            history.pushState({}, "", path);
+            history.replaceState({}, "", path);
 
             // set currentPath (see base.html)
             currentPath = path;
@@ -209,3 +209,9 @@ function removeFile(element) {
         this.remove()
     });
 }
+
+window.onpopstate = function (e) {
+    var url = document.location.href;
+    var path = url.substr(url.indexOf("/filemanager/"));
+    load(path);
+};

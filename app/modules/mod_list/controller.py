@@ -6,7 +6,7 @@ from app import db
 from app.library.formatters import human_size, filename_description
 from app.models.file import File
 from app.models.package import Package
-from mod_process.status_map import StatusMap
+from app.modules.mod_process.status_map import StatusMap
 
 mod_list = Blueprint("mod_list", __name__, url_prefix="/list")
 

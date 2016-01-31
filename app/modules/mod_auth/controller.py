@@ -33,8 +33,10 @@ def login():
 
     form = LoginForm()
 
+    # if form.is_submitted() and (app.testing or form.validate()):
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data, password=hashlib.sha256(form.password.data.encode("utf8")).hexdigest()).first()
+        user = User.query.filter_by(username=form.username.data,
+                                    password=hashlib.sha256(form.password.data.encode("utf8")).hexdigest()).first()
 
         if user is not None:
             login_user(user, remember=form.remember.data)

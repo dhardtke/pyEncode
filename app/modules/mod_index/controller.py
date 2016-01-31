@@ -5,7 +5,7 @@ from flask.ext.socketio import emit
 
 from app import socketio
 from app.library.formatters import formatted_file_data
-from mod_process.file_repository import FileRepository
+from app.modules.mod_process.file_repository import FileRepository
 
 mod_index = Blueprint("mod_index", __name__)
 

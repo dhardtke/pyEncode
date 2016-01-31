@@ -22,8 +22,8 @@ class User(BaseModel, UserMixin):
     encoding_preset = db.Column(db.String())
     encoding_crf = db.Column(db.Integer())
 
-    def __init__(self, name, email, password):
-        self.name = name
+    def __init__(self, username, email, password):
+        self.username = username
         self.email = email
         self.password = password
 

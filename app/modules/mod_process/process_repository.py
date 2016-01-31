@@ -2,8 +2,8 @@ from app import socketio, db
 from app.library.formatters import formatted_file_data
 from app.models.file import File
 from app.models.package import Package
-from mod_process.file_repository import FileRepository
-from mod_process.status_map import StatusMap
+from app.modules.mod_process.file_repository import FileRepository
+from app.modules.mod_process.status_map import StatusMap
 
 
 class ProcessRepository:

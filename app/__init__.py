@@ -62,7 +62,7 @@ db.create_all()
 
 # register common jinja2 functions
 # TODO find a better place where to place these functions
-from mod_process.process_repository import ProcessRepository
+from app.modules.mod_process.process_repository import ProcessRepository
 app.jinja_env.globals.update(count_processes_active=ProcessRepository.count_processes_active)
 app.jinja_env.globals.update(count_processes_queued=ProcessRepository.count_processes_queued)
 app.jinja_env.globals.update(count_processes_total=ProcessRepository.count_processes_total)
