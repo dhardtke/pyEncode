@@ -1,22 +1,18 @@
 import hashlib
 
-from flask import url_for
 from flask.ext.babel import gettext as _
 
-from app import app, db
+from app import db
 from app.models.user import User
 from tests import BaseTestCase
 
 
 class TestModAuth(BaseTestCase):
     def login(self, username, password):
-        with app.test_request_context():
-            return self.client.post(url_for("mod_auth.login"), data=dict(username=username, password=password),
-                                    follow_redirects=False)
+        return self.client.post("/auth/login", data=dict(username=username, password=password), follow_redirects=False)
 
     def logout(self):
-        with app.test_request_context():
-            return self.client.get(url_for("mod_auth.logout"), follow_redirects=False)
+        return self.client.get("/auth/logout", follow_redirects=False)
 
     def test_login_logout(self):
         # rv = self.login("admin", "default")
@@ -37,13 +33,11 @@ class TestModAuth(BaseTestCase):
 
         # try to login properly
         rv = self.login("admin", "password")
-        with app.test_request_context():
-            self.assertRedirects(rv, url_for("mod_index.index"))
+        self.assertRedirects(rv, "/")
 
         # try to logout
         rv = self.logout()
-        with app.test_request_context():
-            self.assertRedirects(rv, url_for("mod_auth.login"))
+        self.assertRedirects(rv, "/auth/login")
 
         # test @login_required decorator
         rv = self.client.get("/")
