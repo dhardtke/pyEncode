@@ -6,7 +6,7 @@
             {% for breadcrumb in breadcrumbs %}
                 <li{{ ' class="active"'|safe if loop.last else '' }}>
                     {% if not loop.last %}
-                        <a href="/filemanager{{ "/" if not loop.first }}{{ breadcrumb.path }}" class="ajax_path">{{ breadcrumb.name }}</a>
+                        <a href="/filemanager{{ "/" if not loop.first and is_windows }}{{ breadcrumb.path }}" class="ajax_path">{{ breadcrumb.name }}</a>
                     {% else %}
                         {{ breadcrumb.name }}
                     {% endif %}

@@ -24,13 +24,21 @@ def filemanager(path):
     path_instance = Path(path)
 
     # build a breadcrumbs structure
-    breadcrumbs = [{"name": "/", "path": "/"}]
+    breadcrumbs = []
+    if path == "/" or os.name == "nt":
+        # on Windows we have this special "/" folder that shows a list of all drives
+        breadcrumbs.append({"name": "/", "path": "/"})
     parents = path_instance.parents
 
     for parent in parents:
         # insert parent at position 1 (second item)
-        breadcrumbs.insert(1, {"name": str(parent).replace("\\", "") if parent.name == "" else parent.name,
-                               "path": parent.as_posix()})
+        pos = 0
+
+        if os.name == "nt":
+            pos = 1
+
+        breadcrumbs.insert(pos, {"name": str(parent).replace("\\", "") if parent.name == "" else parent.name,
+                                 "path": parent.as_posix()})
 
     # add the current path if we are not at root-level
     if str(path_instance) != os.path.normpath("/"):
@@ -68,7 +76,7 @@ def filemanager(path):
 
             items.append({
                 "name": filename,
-                "path": ("/" if not is_file else "") + full_path.as_posix(),
+                "path": ("/" if not is_file and os.name == "nt" else "") + full_path.as_posix(),
                 "type": ("file" if is_file else "folder"),
                 "extension": os.path.splitext(filename)[1][1:],
                 "size": (human_size(size) if is_file else "--"),
@@ -104,11 +112,12 @@ def filemanager(path):
     parent_path = path_instance.parent.as_posix()
 
     # this is only the case for the root on windows
-    if path == parent_path:
-        parent_path = "/"
-    else:
-        parent_path = "/" + parent_path
+    if os.name == "nt":
+        if path == parent_path:
+            parent_path = "/"
+        else:
+            parent_path = "/" + parent_path
 
     return render_template("filemanager.html", js_name="filemanager.js", css_name="filemanager.css", config=conf,
                            breadcrumbs=breadcrumbs, filter=request_filter, files=items, filemanager=True,
-                           parent_path=parent_path, path=path, title=_("File Manager"))
+                           is_windows=os.name == "nt", parent_path=parent_path, path=path, title=_("File Manager"))
