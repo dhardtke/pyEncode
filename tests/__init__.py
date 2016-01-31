@@ -10,6 +10,7 @@ class BaseTestCase(TestCase):
     def create_app(self):
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///"
         app.config["TESTING"] = True
+        app.config["PRESERVE_CONTEXT_ON_EXCEPTION"] = False
         # disable CSRF checking when testing to allow form-validation testing
         app.config["WTF_CSRF_ENABLED"] = False
         return app
