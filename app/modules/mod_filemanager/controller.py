@@ -20,17 +20,8 @@ def filemanager(path):
     # always prepend the root if we're not in it yet
     if path != "/" and os.name != "nt":
         path = "/" + path
-    # elif os.name == "nt" and path[:-1] != "/":
-    #    path += "/"
 
     path_instance = Path(path)
-
-    # build breadcrumbs path
-    """
-    breadcrumbs = ("/" + path).split("/")
-    breadcrumbs[0] = "/"  # first element is empty by default, needs to be "/"
-    breadcrumbs = [x for x in breadcrumbs if x != ""]
-    """
 
     # build a breadcrumbs structure
     breadcrumbs = [{"name": "/", "path": "/"}]

@@ -1,6 +1,3 @@
-# Statement for enabling the development environment
-DEBUG = True
-
 # Define the application directory
 import os
 
@@ -10,11 +7,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 # SQLite for this example
 SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(BASE_DIR, "app.db")
 DATABASE_CONNECT_OPTIONS = {}
-
-if DEBUG:
-    SQLALCHEMY_TRACK_MODIFICATIONS = True
-else:
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Application threads. A common general assumption is
 # using 2 per available processor cores - to handle
