@@ -1,0 +1,7 @@
+box: wercker/python
+build:
+  steps:
+    - pip-install
+    - script:
+          name: flask tests
+          code: python run_tests.py
