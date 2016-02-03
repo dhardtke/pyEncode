@@ -1,3 +1,4 @@
+mock
 Babel==2.2.0
 cssmin==0.2.0
 eventlet==0.18.0

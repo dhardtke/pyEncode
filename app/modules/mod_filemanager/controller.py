@@ -7,6 +7,7 @@ from flask import Blueprint, request, render_template
 from flask.ext.babel import gettext as _
 from flask.ext.login import login_required
 
+from app import app
 from app.library.extensions import allowed_extensions
 from app.library.formatters import human_size
 
@@ -54,8 +55,8 @@ def filemanager(path):
     # the list of item rows that will be shown in the file manager's table
     items = []
 
-    # on Windows only show the normal file/folder view when the path is not "/"
-    if os.name != "nt" or path != "/":
+    # on Windows only show the normal file/folder view when the path is not "/" (and testing is disabled)
+    if app.testing or os.name != "nt" or path != "/":
         # grab a list of filenames using os.listdir, filter out all files that don't have
         # an extension from "allowed_extensions" or aren't dirs and process "request_filter"
         filename_list = sorted(filter(
