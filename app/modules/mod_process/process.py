@@ -21,3 +21,16 @@ class Process(Thread):
         # print(instance.communicate())
 
         ProcessRepository.file_done(self.file)
+
+    def stop(self):
+        pass
+
+    def start_avconv(self):
+        pass
+
+    def stop_avconv(self):
+        pass
+
+    def get_avconv_output(self):
+        yield("TODO")
+        # TODO mit yield arbeiten

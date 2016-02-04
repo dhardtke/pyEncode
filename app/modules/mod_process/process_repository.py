@@ -15,7 +15,7 @@ class ProcessRepository:
     # notice: do not modify this directly, but use set_encoding_active()
     encoding_active = False
 
-    # TODO auslagern in config
+    # TODO auslagern in config *und* in test anpassen
     parallel_processes = 1
 
     @staticmethod
