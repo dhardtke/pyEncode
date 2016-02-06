@@ -55,8 +55,6 @@ $(function () {
      * update a file in the DOM whenever we receive the "file_progress" event
      */
     socket.on("file_progress", function (msg) {
-        console.log(msg.data);
-
         var $file = $overview.find("tr[data-file-id='" + msg.data.id + "']");
 
         setFileData($file, msg.data);

@@ -1,3 +1,12 @@
+# TODO
+import eventlet
+import io
+
+from app import db
+from app.models.file import File
+
+eventlet.monkey_patch()
+
 # this class / module serves as a wrapper for the avconv process
 import os
 import re
@@ -8,12 +17,10 @@ from threading import Thread
 import subprocess
 import math
 
-# from eventlet.green.subprocess import Popen
-from subprocess import Popen
+from eventlet.green.subprocess import Popen
+# from subprocess import Popen
 
-from app import db
 from app.modules.mod_process.process_repository import ProcessRepository
-# from app.modules.mod_process.eventlet_helpers import read
 
 config = {
     "encoding_acodec": "aac",
@@ -38,12 +45,10 @@ class Process(Thread):
         # probe file first
         frame_count = self.avconv_probe_frame_count()
 
-        """
-        ProcessRepository.file_progress(self.file, {})
+        """ProcessRepository.file_progress(self.file, {})
 
         import sys
-        sys.exit(0)
-        """
+        sys.exit(0)"""
 
         if frame_count == -1:
             # app.logger.debug("Probing of " + file.filename + " failed - aborting...")
@@ -81,18 +86,10 @@ class Process(Thread):
             # @todo catch when process does no longer exists in DB, because user has been deleted
 
             # store information in database
-            """
-            self.file.eta = info["eta"]
-            self.file.progress = info["progress"]
-            self.file.bitrate = info["bitrate"]
-            self.file.time = info["time"]
-            self.file.size = info["size"]
-            self.file.fps = info["fps"]
+            File.query.filter_by(id=self.file.id).update(dict(avconv_eta=info["eta"], avconv_progress=info["progress"], avconv_bitrate=info["bitrate"], avconv_time=info["time"], avconv_size=info["size"], avconv_fps=info["fps"]))
             db.session.commit()
-            """
-            # TODO is this necessary?
+
             # tell ProcessRepository there's some progress going on
-            info["id"] = self.file.id  # TODO nicer way of doing this
             ProcessRepository.file_progress(self.file, info)
 
         # TODO
@@ -135,8 +132,17 @@ class Process(Thread):
     """
 
     def avconv_probe_frame_count(self):
-        instance = Popen(["avprobe", self.file.filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True)
-        output = "\n".join(instance.communicate())
+        instance = Popen(["avprobe", self.file.filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # instance = Popen(["tasklist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # output = "\n".join(instance.communicate())
+
+        # TODO shorter code pls
+        output = ""
+        for line in instance.stderr:
+            output += line.decode("utf8")
+
+            # call sleep, see https://stackoverflow.com/questions/34599578/using-popen-in-a-thread-blocks-every-incoming-flask-socketio-request
+            eventlet.sleep()
 
         # TODO logging
         # app.logger.debug("Probing with avprobe \"" + file.filename + "\"")
@@ -159,38 +165,47 @@ class Process(Thread):
         pass
 
     def run_avconv(self, cmd, frame_count):
-        instance = Popen(map(str, cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True)
+        instance = Popen(map(str, cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        reader = io.TextIOWrapper(instance.stderr, encoding="utf8")
+
+        """
+        print(cmd)
+        import sys
+        sys.exit(0)
+        """
 
         # set avconv_pid
-        self.file.avconv_pid = instance.pid
-        db.session.commit()
+        # self.file.avconv_pid = instance.pid
+        # db.session.commit()
+        # TODO
 
         # these two variables are just needed for when the processing fails, see below
         last_lines = deque(maxlen=5)  # parameter determines how many lines to keep
 
         # oddly avconv writes to stderr instead of stdout
-        for line in instance.stderr:
+        for line in reader:
+            # call sleep, see https://stackoverflow.com/questions/34599578/using-popen-in-a-thread-blocks-every-incoming-flask-socketio-request
+            eventlet.sleep()
+
             # append current line to last_lines
             last_lines.append(line)
 
             match = AVCONV_PATTERN.match(line)
 
             # first few lines have no match
-            if not match:
-                continue
+            if match:
+                frame = int(match.group(1))  # current frame, needed for calculation of progress
+                fps = int(match.group(2))  # needed for calculation of remaining time
+                size = int(match.group(3))  # current size in kB
+                time = float(match.group(4))  # time already passed for converting, in seconds
+                bitrate = float(match.group(5))  # in kbits/s
+                progress = round((frame / float(frame_count)) * 100, 1)  # in %
 
-            frame = int(match.group(1))  # current frame, needed for calculation of progress
-            fps = int(match.group(2))  # needed for calculation of remaining time
-            size = int(match.group(3))  # current size in kB
-            time = float(match.group(4))  # time already passed for converting, in seconds
-            bitrate = float(match.group(5))  # in kbits/s
-            progress = round((frame / float(frame_count)) * 100, 1)  # in %
+                frames_remaining = frame_count - frame  # needed for eta
+                eta = frames_remaining / fps if fps != 0 else -1  # in seconds
 
-            frames_remaining = frame_count - frame  # needed for eta
-            eta = frames_remaining / fps if fps != 0 else -1  # in seconds
-
-            yield {"return_code": -1, "eta": eta, "progress": progress, "bitrate": bitrate, "time": time, "size": size,
-                   "fps": fps}
+                yield {"return_code": -1, "eta": eta, "progress": progress, "bitrate": bitrate, "time": time,
+                       "size": size, "fps": fps}
 
         return_code = instance.wait()
         if return_code != 0:

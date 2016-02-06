@@ -43,7 +43,7 @@ babel = Babel(app)
 Compress(app)
 
 # TODO async_mode, see https://stackoverflow.com/questions/35235797/socketio-emit-doesnt-work-when-interacting-using-popen-on-windows-in-a-thread
-socketio = SocketIO(app, async_mode="threading")
+socketio = SocketIO(app) # , async_mode="threading"
 
 
 @babel.localeselector

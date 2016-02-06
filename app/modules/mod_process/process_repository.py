@@ -38,14 +38,15 @@ class ProcessRepository:
             # start the Process
             from app.modules.mod_process.process import Process
             process = Process(file)
+            process.daemon = True  # todo
             # add to "processes" dict
             ProcessRepository.processes[file.id] = process
             process.start()
             # update file.status in DB
             file.status = StatusMap.processing.value
             # TODO just debug code
-            # db.session.commit()
-            ProcessRepository.encoding_active = False
+            db.session.commit()
+            # ProcessRepository.encoding_active = False
 
             # emit file_started event
             data = formatted_file_data(file)
@@ -97,5 +98,7 @@ class ProcessRepository:
 
     @staticmethod
     def file_progress(file, info):
+        info["id"] = file.id  # TODO nicer way of doing this
+
         socketio.emit("file_progress", {"data": info})
         return

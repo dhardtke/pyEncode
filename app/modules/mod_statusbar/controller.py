@@ -5,7 +5,7 @@ import os
 from flask import Blueprint, request
 from flask.ext.login import login_required, current_user
 
-from app import db
+from app import db, socketio
 from app.models.file import File
 from app.models.package import Package
 from app.modules.mod_process.process_repository import ProcessRepository
