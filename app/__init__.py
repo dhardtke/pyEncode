@@ -12,53 +12,48 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.assets import Environment
 from flask.ext.babel import Babel
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-CONFIG_PATH = os.path.join(BASE_DIR, "data", "config.ini")
-config = ConfigParser()
-
 # Define the WSGI application object
-def create_app():
-    app = Flask(__name__)
-    app.config["CSRF_ENABLED"] = True
-    app.config["LANGUAGES"] = {
-        "en": "English",
-        "de": "Deutsch"
-    }
-    app.config["BASE_DIR"] = BASE_DIR
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(app.config["BASE_DIR"], "data", "app.db")
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["THREADS_PER_PAGE"] = 2  # TODO?
+app = Flask(__name__)
+app.config["CSRF_ENABLED"] = True
+app.config["LANGUAGES"] = {
+    "en": "English",
+    "de": "Deutsch"
+}
+app.config["BASE_DIR"] = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(app.config["BASE_DIR"], "data", "app.db")
+print(app.config["SQLALCHEMY_DATABASE_URI"])
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["THREADS_PER_PAGE"] = 2  # TODO?
 
-    # initialize app specific config
-    if os.path.isfile(CONFIG_PATH):
-        config.read(CONFIG_PATH)
-    else:
-        warnings.warn("Loading fallback config - %s does not exist!" % CONFIG_PATH, RuntimeWarning)
-        config.read_dict({
-            "general": {
-                "csrf_session_key": "secret",
-                "secret_key": "secret",
-                "parallel_processes": 1
-            },
-            "filemanager": {
-                "show_resolution": False
-            },
-            "encoding": {
-                "acodec": "aac",
-                "strict": "experimental",
-                "s": "1280x720",
-                "aspect": "1280:720",
-                "preset": "slow",
-                "crf": 22
-            }
-        })
+# initialize app specific config
+CONFIG_PATH = os.path.join(app.config["BASE_DIR"], "data", "config.ini")
+config = ConfigParser()
+if os.path.isfile(CONFIG_PATH):
+    config.read(CONFIG_PATH)
+else:
+    warnings.warn("Loading fallback config - %s does not exist!" % CONFIG_PATH, RuntimeWarning)
+    config.read_dict({
+        "general": {
+            "csrf_session_key": "secret",
+            "secret_key": "secret",
+            "parallel_processes": 1
+        },
+        "filemanager": {
+            "show_resolution": False
+        },
+        "encoding": {
+            "acodec": "aac",
+            "strict": "experimental",
+            "s": "1280x720",
+            "aspect": "1280:720",
+            "preset": "slow",
+            "crf": 22
+        }
+    })
 
-    app.config["CSRF_SESSION_KEY"] = config["general"]["csrf_session_key"]
-    app.config["SECRET_KEY"] = config["general"]["secret_key"]
-    return app
+app.config["CSRF_SESSION_KEY"] = config["general"]["csrf_session_key"]
+app.config["SECRET_KEY"] = config["general"]["secret_key"]
 
-
-app = create_app()
 assets = Environment(app)
 # load asset definitions from "static/webassets.yml"
 assets.from_yaml(app.root_path + os.sep + "static" + os.sep + "webassets.yml")
