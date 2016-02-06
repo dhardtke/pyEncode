@@ -21,6 +21,16 @@ def toggle_encoding_active():
     return ""
 
 
+@mod_statusbar.route("/cancel", methods=["POST"])
+@login_required
+def cancel_processes():
+    ProcessRepository.cancel_all_processes()
+
+    # after cancelling check if it's necessary to start new processes
+    ProcessRepository.check_and_start_processes()
+    return ""
+
+
 @mod_statusbar.route("/add", methods=["POST"])
 @login_required
 def add_package():

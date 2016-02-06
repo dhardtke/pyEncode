@@ -41,6 +41,14 @@ $(function () {
         $.post("/statusbar/toggle");
     });
 
+    $("#cancel-processes-btn").on("click", function(e) {
+        e.preventDefault();
+
+        $.post("/statusbar/cancel").done(function (data) {
+            notify("success", lang["process_cancel_success"]);
+        });
+    });
+
     var $addPackageModal = $("#add-package-modal");
     var $addPackageForm = $addPackageModal.find("form");
     var $filenames = $("#filenames");

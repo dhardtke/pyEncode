@@ -26,6 +26,24 @@ class ProcessRepository:
         ProcessRepository.check_and_start_processes()
 
     @staticmethod
+    def cancel_all_processes():
+        for file_id in ProcessRepository.processes:
+            # stop thread
+            ProcessRepository.processes[file_id].stop()
+            # update status
+            file = File.query.filter_by(id=file_id).first()
+            file.status = StatusMap.failed.value
+            db.session.commit()
+
+            # emit file_done event
+            socketio.emit("file_done", {"data": formatted_file_data(file)})
+
+        # clear processes
+        ProcessRepository.processes.clear()
+
+        return
+
+    @staticmethod
     def check_and_start_processes():
         while ProcessRepository.encoding_active:
             # grab next potential file to process
@@ -77,7 +95,7 @@ class ProcessRepository:
         ProcessRepository.processes.pop(file.id)
 
         # update status to "finished"
-        db.session.query(File).filter_by(id=file.id).update({"status": StatusMap.finished.value})
+        db.session.query(File).filter_by(id=file.id).update(dict(status=StatusMap.finished.value))
         db.session.commit()
 
         # check if it's necessary to start new processes

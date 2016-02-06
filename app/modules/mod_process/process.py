@@ -24,6 +24,7 @@ class Process(Thread):
     def __init__(self, file):
         Thread.__init__(self)
         self.file = file
+        self.active = True
 
     def run(self):
         # probe file first
@@ -48,6 +49,10 @@ class Process(Thread):
         # app.logger.debug("Starting encoding of " + str(file.filename) + " with " + " ".join(map(str, cmd)))
 
         for info in Process.run_avconv(cmd, frame_count):
+            # return if Thread has been marked as inactive
+            if not self.active:
+                return
+
             if info["return_code"] != -1:
                 # app.logger.debug("Error occured while running avconv. Last five lines of output: ")
                 # last_5 = "\n".join(total_output.splitlines()[-5:])
@@ -78,7 +83,8 @@ class Process(Thread):
         # @todo beim umbenennen die Erweiterung erkennen, abhängig von der Ausgabeformatseinstellung
         # @todo option für umbennen, z.B. -selfmade-Anhängung änderbar machen
 
-        ProcessRepository.file_done(self.file)
+        if self.active:
+            ProcessRepository.file_done(self.file)
         return
 
     def collect_parameters(self):
@@ -131,7 +137,8 @@ class Process(Thread):
         return frame_count
 
     def stop(self):
-        pass
+        self.active = False
+        return
 
     @staticmethod
     def run_avconv(cmd, frame_count):
