@@ -1,15 +1,18 @@
 # this class / module serves as a wrapper for the avconv process
-import eventlet
 import io
-from app import db, config
-from app.models.file import File
+import math
 import os
 import re
+import subprocess
+
 from collections import deque
 from threading import Thread
-import subprocess
-import math
+
+import eventlet
 from eventlet.green.subprocess import Popen
+
+from app import db, config
+from app.models.file import File
 from app.modules.mod_process.process_repository import ProcessRepository
 
 # we need to monkey patch the threading module, see http://eventlet.net/doc/patching.html
@@ -62,7 +65,9 @@ class Process(Thread):
                 return
 
             # store information in database
-            File.query.filter_by(id=self.file.id).update(dict(avconv_eta=info["eta"], avconv_progress=info["progress"], avconv_bitrate=info["bitrate"], avconv_time=info["time"], avconv_size=info["size"], avconv_fps=info["fps"]))
+            File.query.filter_by(id=self.file.id).update(
+                dict(avconv_eta=info["eta"], avconv_progress=info["progress"], avconv_bitrate=info["bitrate"],
+                     avconv_time=info["time"], avconv_size=info["size"], avconv_fps=info["fps"]))
             db.session.commit()
 
             # tell ProcessRepository there's some progress going on
