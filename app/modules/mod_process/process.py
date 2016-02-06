@@ -1,35 +1,19 @@
-# TODO
+# this class / module serves as a wrapper for the avconv process
 import eventlet
 import io
-
-from app import db
+from app import db, config
 from app.models.file import File
-
-eventlet.monkey_patch()
-
-# this class / module serves as a wrapper for the avconv process
 import os
 import re
 from collections import deque
 from threading import Thread
-
-# see https://github.com/miguelgrinberg/Flask-SocketIO/issues/192
 import subprocess
 import math
-
 from eventlet.green.subprocess import Popen
-# from subprocess import Popen
-
 from app.modules.mod_process.process_repository import ProcessRepository
 
-config = {
-    "encoding_acodec": "aac",
-    "encoding_strict": "experimental",
-    "encoding_s": "1280x720",
-    "encoding_aspect": "1280:720",
-    "encoding_preset": "slow",
-    "encoding_crf": 22
-}
+# we need to monkey patch the threading module, see http://eventlet.net/doc/patching.html
+eventlet.monkey_patch(thread=True)
 
 # the pattern to fetch meta information of the current progress
 AVCONV_PATTERN = re.compile(
@@ -45,18 +29,8 @@ class Process(Thread):
         # probe file first
         frame_count = self.avconv_probe_frame_count()
 
-        """ProcessRepository.file_progress(self.file, {})
-
-        import sys
-        sys.exit(0)"""
-
         if frame_count == -1:
             # app.logger.debug("Probing of " + file.filename + " failed - aborting...")
-            # file.status = statusMap["failed"]
-            # file.process = None
-            # db.session.delete(process)
-            # db.session.commit()
-            # sys.exit(1)
             ProcessRepository.file_failed(self.file)
             return
 
@@ -73,17 +47,14 @@ class Process(Thread):
 
         # app.logger.debug("Starting encoding of " + str(file.filename) + " with " + " ".join(map(str, cmd)))
 
-        for info in self.run_avconv(cmd, frame_count):
-            if info["return_code"] != -1 and info["return_code"] != 0:
-                # TODO nicht einfach auf failed setzen, sondern eine methode wie fail() callen
-                # print("Error occured while running avconv. Check log for details")
+        for info in Process.run_avconv(cmd, frame_count):
+            if info["return_code"] != -1:
                 # app.logger.debug("Error occured while running avconv. Last five lines of output: ")
                 # last_5 = "\n".join(total_output.splitlines()[-5:])
                 # app.logger.debug(last_5)
-                # quit(None, None)
-                return  # TODO
-
-            # @todo catch when process does no longer exists in DB, because user has been deleted
+                # print(info["last_lines"])
+                ProcessRepository.file_failed(self.file)
+                return
 
             # store information in database
             File.query.filter_by(id=self.file.id).update(dict(avconv_eta=info["eta"], avconv_progress=info["progress"], avconv_bitrate=info["bitrate"], avconv_time=info["time"], avconv_size=info["size"], avconv_fps=info["fps"]))
@@ -114,12 +85,12 @@ class Process(Thread):
         cmd = []
         cmd.extend(["-i", self.file.filename])
         # cmd.extend(["-vcodec", "libx264"])
-        cmd.extend(["-acodec", config["encoding_acodec"]])
-        cmd.extend(["-strict", config["encoding_strict"]])
-        cmd.extend(["-s", config["encoding_s"]])
-        cmd.extend(["-aspect", config["encoding_aspect"]])
-        cmd.extend(["-preset", config["encoding_preset"]])
-        cmd.extend(["-crf", config["encoding_crf"]])
+        cmd.extend(["-acodec", config["encoding"]["acodec"]])
+        cmd.extend(["-strict", config["encoding"]["strict"]])
+        cmd.extend(["-s", config["encoding"]["s"]])
+        cmd.extend(["-aspect", config["encoding"]["aspect"]])
+        cmd.extend(["-preset", config["encoding"]["preset"]])
+        cmd.extend(["-crf", config["encoding"]["crf"]])
         # fix some files not being encodable
         cmd.extend(["-c:a", "copy"])
 
@@ -133,8 +104,6 @@ class Process(Thread):
 
     def avconv_probe_frame_count(self):
         instance = Popen(["avprobe", self.file.filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # instance = Popen(["tasklist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # output = "\n".join(instance.communicate())
 
         # TODO shorter code pls
         output = ""
@@ -164,20 +133,10 @@ class Process(Thread):
     def stop(self):
         pass
 
-    def run_avconv(self, cmd, frame_count):
+    @staticmethod
+    def run_avconv(cmd, frame_count):
         instance = Popen(map(str, cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         reader = io.TextIOWrapper(instance.stderr, encoding="utf8")
-
-        """
-        print(cmd)
-        import sys
-        sys.exit(0)
-        """
-
-        # set avconv_pid
-        # self.file.avconv_pid = instance.pid
-        # db.session.commit()
-        # TODO
 
         # these two variables are just needed for when the processing fails, see below
         last_lines = deque(maxlen=5)  # parameter determines how many lines to keep

@@ -53,7 +53,6 @@ def add_package():
 
     db.session.commit()
 
-    # after adding, see if we have to start processing or anything
-    # ProcessRepository.check_and_start_processes()
-    # TODO
+    # after adding, see if we have to start processes
+    ProcessRepository.check_and_start_processes()
     return "1"

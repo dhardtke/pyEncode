@@ -1,6 +1,5 @@
+from configparser import ConfigParser
 import os
-
-from app.library.config import Config
 
 # Import flask and template operators
 from flask import Flask, render_template, request
@@ -23,9 +22,14 @@ app.config["BASE_DIR"] = os.path.abspath(os.path.join(os.path.dirname(__file__),
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(app.config["BASE_DIR"], "data", "app.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["THREADS_PER_PAGE"] = 2  # TODO?
-config = Config(os.path.join(app.config["BASE_DIR"], "data", "config.ini"))
-app.config["CSRF_SESSION_KEY"] = config["general"]["CSRF_SESSION_KEY"]
-app.config["SECRET_KEY"] = config["general"]["SECRET_KEY"]
+
+# initialize app specific config
+CONFIG_PATH = os.path.join(app.config["BASE_DIR"], "data", "config.ini")
+config = ConfigParser()
+config.read(CONFIG_PATH)
+
+app.config["CSRF_SESSION_KEY"] = config["general"]["csrf_session_key"]
+app.config["SECRET_KEY"] = config["general"]["secret_key"]
 
 assets = Environment(app)
 # load asset definitions from "static/webassets.yml"
@@ -48,7 +52,7 @@ socketio = SocketIO(app) # , async_mode="threading"
 
 @babel.localeselector
 def get_locale():
-    return request.accept_languages.best_match(app.config['LANGUAGES'].keys())
+    return request.accept_languages.best_match(app.config["LANGUAGES"].keys())
 
 
 @app.errorhandler(404)
@@ -79,3 +83,9 @@ app.jinja_env.globals.update(count_processes_active=ProcessRepository.count_proc
 app.jinja_env.globals.update(count_processes_queued=ProcessRepository.count_processes_queued)
 app.jinja_env.globals.update(count_processes_total=ProcessRepository.count_processes_total)
 app.jinja_env.globals.update(encoding_active=lambda: ProcessRepository.encoding_active)
+
+
+# run fail method when this Thread is still running and the program quits unexpectedly
+# for sig in (signal.SIGABRT, signal.SIGBREAK, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM):
+#    signal.signal(sig, ProcessRepository.file_failed(None))
+# TODO!!

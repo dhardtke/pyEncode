@@ -22,7 +22,6 @@ $(function () {
     // TODO file_deleted event
 
     socket.on("file_done", function (msg) {
-        alert("file done");
         console.log(msg);
         /*
          $countActive.html(msg.data.count_active);

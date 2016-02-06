@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Run a test server.
 from app import app, socketio
 

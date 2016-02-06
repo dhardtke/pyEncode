@@ -22,31 +22,32 @@ class ProcessRepository:
         # fire event
         socketio.emit("active_changed", {"active": new_state})
 
-        if ProcessRepository.encoding_active:
-            # check if it's necessary to start new processes
-            ProcessRepository.check_and_start_processes()
+        # check if it's necessary to start new processes
+        ProcessRepository.check_and_start_processes()
 
     @staticmethod
     def check_and_start_processes():
-        while True:
+        while ProcessRepository.encoding_active:
             # grab next potential file to process
             file = FileRepository.get_queued_query().order_by(Package.position.asc(), File.position.asc()).first()
 
-            if not ProcessRepository.encoding_active or file is None or ProcessRepository.count_processes_active() >= config["general"].getint("PARALLEL_PROCESSES"):
+            if file is None or ProcessRepository.count_processes_active() >= config["general"].getint(
+                    "parallel_processes"):
                 break
 
             # start the Process
             from app.modules.mod_process.process import Process
             process = Process(file)
-            process.daemon = True  # todo
+            process.daemon = True
+
             # add to "processes" dict
             ProcessRepository.processes[file.id] = process
+
             process.start()
+
             # update file.status in DB
             file.status = StatusMap.processing.value
-            # TODO just debug code
             db.session.commit()
-            # ProcessRepository.encoding_active = False
 
             # emit file_started event
             data = formatted_file_data(file)
@@ -74,13 +75,13 @@ class ProcessRepository:
     def file_done(file):
         # delete from "processes"
         ProcessRepository.processes.pop(file.id)
+
         # update status to "finished"
         db.session.query(File).filter_by(id=file.id).update({"status": StatusMap.finished.value})
         db.session.commit()
 
         # check if it's necessary to start new processes
-        if ProcessRepository.encoding_active:
-            ProcessRepository.check_and_start_processes()
+        ProcessRepository.check_and_start_processes()
 
         # notify client
         socketio.emit("file_done", {
@@ -92,9 +93,39 @@ class ProcessRepository:
             }
         })
 
+        return
+
     @staticmethod
     def file_failed(file):
-        pass  # TODO
+        # delete from "processes"
+        ProcessRepository.processes.pop(file.id)
+
+        # update status and set attributes to zero
+        db.session.query(File).filter_by(id=file.id).update({
+            "status": StatusMap.failed.value,
+            "avconv_progress": 0,
+            "avconv_eta": 0,
+            "avconv_bitrate": 0,
+            "avconv_time": 0,
+            "avconv_size": 0,
+            "avconv_fps": 0
+        })
+        db.session.commit()
+
+        # check if it's necessary to start new processes
+        ProcessRepository.check_and_start_processes()
+
+        # notify client
+        socketio.emit("file_done", {
+            "data": {
+                "id": file.id,
+                "count_active": ProcessRepository.count_processes_active(),
+                "count_queued": ProcessRepository.count_processes_queued(),
+                "count_total": ProcessRepository.count_processes_total(),
+            }
+        })
+
+        return
 
     @staticmethod
     def file_progress(file, info):
