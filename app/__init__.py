@@ -1,5 +1,6 @@
-from configparser import ConfigParser
 import os
+import warnings
+from configparser import ConfigParser
 
 # Import flask and template operators
 from flask import Flask, render_template, request
@@ -26,7 +27,28 @@ app.config["THREADS_PER_PAGE"] = 2  # TODO?
 # initialize app specific config
 CONFIG_PATH = os.path.join(app.config["BASE_DIR"], "data", "config.ini")
 config = ConfigParser()
-config.read(CONFIG_PATH)
+if os.path.isfile(CONFIG_PATH):
+    config.read(CONFIG_PATH)
+else:
+    warnings.warn("Loading fallback config - %s does not exist!" % CONFIG_PATH, RuntimeWarning)
+    config.read_dict({
+        "general": {
+            "csrf_session_key": "secret",
+            "secret_key": "secret",
+            "parallel_processes": 1
+        },
+        "filemanager": {
+            "show_resolution": False
+        },
+        "encoding": {
+            "acodec": "aac",
+            "strict": "experimental",
+            "s": "1280x720",
+            "aspect": "1280:720",
+            "preset": "slow",
+            "crf": 22
+        }
+    })
 
 app.config["CSRF_SESSION_KEY"] = config["general"]["csrf_session_key"]
 app.config["SECRET_KEY"] = config["general"]["secret_key"]
@@ -47,7 +69,7 @@ babel = Babel(app)
 Compress(app)
 
 # TODO async_mode, see https://stackoverflow.com/questions/35235797/socketio-emit-doesnt-work-when-interacting-using-popen-on-windows-in-a-thread
-socketio = SocketIO(app) # , async_mode="threading"
+socketio = SocketIO(app)  # , async_mode="threading"
 
 
 @babel.localeselector
