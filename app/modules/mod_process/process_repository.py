@@ -54,6 +54,10 @@ class ProcessRepository:
                     "parallel_processes"):
                 break
 
+            # update file.status in DB
+            file.status = StatusMap.processing.value
+            db.session.commit()
+
             # start the Process
             from app.modules.mod_process.process import Process
             process = Process(file)
@@ -63,10 +67,6 @@ class ProcessRepository:
             ProcessRepository.processes[file.id] = process
 
             process.start()
-
-            # update file.status in DB
-            file.status = StatusMap.processing.value
-            db.session.commit()
 
             # emit file_started event
             data = formatted_file_data(file)
