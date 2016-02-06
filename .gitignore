@@ -103,5 +103,4 @@ docs/_build/
 # PyBuilder
 target/
 
-# TODO
-data/app.db
+data/*
