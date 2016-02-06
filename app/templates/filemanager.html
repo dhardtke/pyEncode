@@ -47,7 +47,7 @@
                 <th class="unselectable" data-defaultsort="desc">{{ _("Filename") }}</th>
                 <th class="unselectable">{{ _("File Size") }}</th>
                 <th class="unselectable">{{ _("Last Change") }}</th>
-                {% if config["general"]["show_resolution"] == "True" %}
+                {% if config["filemanager"].getboolean("SHOW_RESOLUTION") %}
                     <th class="unselectable resolution_head">{{ _("Resolution") }}</th>
                 {% endif %}
                 <th data-sortable="false"></th>
@@ -82,7 +82,7 @@
                     <td data-value="{{ file['modified_raw'] }}">
                         {{ file["modified"] }}
                     </td>
-                    {% if config["general"]["show_resolution"] == "True" %}
+                    {% if config["filemanager"].getboolean("SHOW_RESOLUTION") %}
                         <td class='resolution'>
                             {% if file["type"] == "file" %}
                                 <i class='fa fa-circle-o-notch fa-spin'></i>

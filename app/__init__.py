@@ -1,5 +1,7 @@
 import os
 
+from app.library.config import Config
+
 # Import flask and template operators
 from flask import Flask, render_template, request
 
@@ -12,9 +14,18 @@ from flask.ext.babel import Babel
 
 # Define the WSGI application object
 app = Flask(__name__)
-# load config from config.py
-# TODO use YAML
-app.config.from_object("config")
+app.config["CSRF_ENABLED"] = True
+app.config["LANGUAGES"] = {
+    "en": "English",
+    "de": "Deutsch"
+}
+app.config["BASE_DIR"] = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(app.config["BASE_DIR"], "data", "app.db")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["THREADS_PER_PAGE"] = 2  # TODO?
+config = Config(os.path.join(app.config["BASE_DIR"], "data", "config.ini"))
+app.config["CSRF_SESSION_KEY"] = config["general"]["CSRF_SESSION_KEY"]
+app.config["SECRET_KEY"] = config["general"]["SECRET_KEY"]
 
 assets = Environment(app)
 # load asset definitions from "static/webassets.yml"
@@ -31,7 +42,8 @@ db = SQLAlchemy(app)
 babel = Babel(app)
 Compress(app)
 
-socketio = SocketIO(app)
+# TODO async_mode, see https://stackoverflow.com/questions/35235797/socketio-emit-doesnt-work-when-interacting-using-popen-on-windows-in-a-thread
+socketio = SocketIO(app, async_mode="threading")
 
 
 @babel.localeselector
@@ -61,8 +73,8 @@ app.register_blueprint(mod_filemanager)
 db.create_all()
 
 # register common jinja2 functions
-# TODO find a better place where to place these functions
 from app.modules.mod_process.process_repository import ProcessRepository
+
 app.jinja_env.globals.update(count_processes_active=ProcessRepository.count_processes_active)
 app.jinja_env.globals.update(count_processes_queued=ProcessRepository.count_processes_queued)
 app.jinja_env.globals.update(count_processes_total=ProcessRepository.count_processes_total)

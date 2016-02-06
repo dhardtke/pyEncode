@@ -16,13 +16,13 @@ class File(BaseModel):
     # relations
     package = db.relationship("Package", backref="files", cascade="all, delete-orphan", single_parent=True)
 
-    avconv_pid = db.Column(db.Integer())
-    avconv_eta = db.Column(db.Float())  # in seconds so the user can format it
-    avconv_progress = db.Column(db.Float())
-    avconv_bitrate = db.Column(db.Float())
-    avconv_time = db.Column(db.Integer())
-    avconv_size = db.Column(db.Float())
-    avconv_fps = db.Column(db.Integer())
+    avconv_pid = db.Column(db.Integer(), default=0)
+    avconv_eta = db.Column(db.Float(), default=0)  # in seconds so the user can format it
+    avconv_progress = db.Column(db.Float(), default=0)
+    avconv_bitrate = db.Column(db.Float(), default=0)
+    avconv_time = db.Column(db.Integer(), default=0)
+    avconv_size = db.Column(db.Float(), default=0)
+    avconv_fps = db.Column(db.Integer(), default=0)
 
     def __repr__(self):
         return "<File %r>" % self.id

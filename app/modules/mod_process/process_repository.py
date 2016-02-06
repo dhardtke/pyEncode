@@ -1,4 +1,4 @@
-from app import socketio, db
+from app import socketio, db, config
 from app.library.formatters import formatted_file_data
 from app.models.file import File
 from app.models.package import Package
@@ -14,9 +14,6 @@ class ProcessRepository:
     # this controls whether or not the encoding processing is active
     # notice: do not modify this directly, but use set_encoding_active()
     encoding_active = False
-
-    # TODO auslagern in config *und* in test anpassen
-    parallel_processes = 1
 
     @staticmethod
     def set_encoding_active(new_state):
@@ -35,23 +32,25 @@ class ProcessRepository:
             # grab next potential file to process
             file = FileRepository.get_queued_query().order_by(Package.position.asc(), File.position.asc()).first()
 
-            if not ProcessRepository.encoding_active or file is None or ProcessRepository.count_processes_active() >= ProcessRepository.parallel_processes:
+            if not ProcessRepository.encoding_active or file is None or ProcessRepository.count_processes_active() >= config["general"].getint("PARALLEL_PROCESSES"):
                 break
 
             # start the Process
-            from mod_process.process import Process
+            from app.modules.mod_process.process import Process
             process = Process(file)
             # add to "processes" dict
             ProcessRepository.processes[file.id] = process
             process.start()
             # update file.status in DB
             file.status = StatusMap.processing.value
-            db.session.commit()
+            # TODO just debug code
+            # db.session.commit()
+            ProcessRepository.encoding_active = False
 
             # emit file_started event
             data = formatted_file_data(file)
-            data.count_active = ProcessRepository.count_processes_active()
-            data.count_queued = ProcessRepository.count_processes_queued()
+            data["count_active"] = ProcessRepository.count_processes_active()
+            data["count_queued"] = ProcessRepository.count_processes_queued()
             socketio.emit("file_started", {"data": data})
 
     @staticmethod
@@ -91,3 +90,12 @@ class ProcessRepository:
                 "count_total": ProcessRepository.count_processes_total(),
             }
         })
+
+    @staticmethod
+    def file_failed(file):
+        pass  # TODO
+
+    @staticmethod
+    def file_progress(file, info):
+        socketio.emit("file_progress", {"data": info})
+        return

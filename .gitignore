@@ -104,4 +104,4 @@ docs/_build/
 target/
 
 # TODO
-app.db
+data/app.db

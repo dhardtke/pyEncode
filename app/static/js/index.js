@@ -55,6 +55,8 @@ $(function () {
      * update a file in the DOM whenever we receive the "file_progress" event
      */
     socket.on("file_progress", function (msg) {
+        console.log(msg.data);
+
         var $file = $overview.find("tr[data-file-id='" + msg.data.id + "']");
 
         setFileData($file, msg.data);
@@ -64,7 +66,6 @@ $(function () {
      * remove a file whenever we receive the "file_done" event
      */
     socket.on("file_done", function (msg) {
-        alert("done?");
         var $file = $overview.find("tr[data-file-id='" + msg.data.id + "']");
 
         if ($file.length != 0) {

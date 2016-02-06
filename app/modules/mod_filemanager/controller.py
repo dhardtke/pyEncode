@@ -7,7 +7,7 @@ from flask import Blueprint, request, render_template
 from flask.ext.babel import gettext as _
 from flask.ext.login import login_required
 
-from app import app
+from app import app, config
 from app.library.extensions import allowed_extensions
 from app.library.formatters import human_size
 
@@ -103,13 +103,6 @@ def filemanager(path):
                 "modified_raw": timestamp
             })
 
-    # TODO config
-    conf = {
-        "general": {
-            "show_resolution": "False"
-        }
-    }
-
     parent_path = path_instance.parent.as_posix()
 
     # this is only the case for the root on windows
@@ -119,6 +112,6 @@ def filemanager(path):
         else:
             parent_path = "/" + parent_path
 
-    return render_template("filemanager.html", js_name="filemanager.js", css_name="filemanager.css", config=conf,
+    return render_template("filemanager.html", js_name="filemanager.js", css_name="filemanager.css", config=config,
                            breadcrumbs=breadcrumbs, filter=request_filter, files=items, filemanager=True,
                            is_windows=os.name == "nt", parent_path=parent_path, path=path, title=_("File Manager"))
