@@ -116,7 +116,6 @@ class Process(Thread):
     def avconv_probe_frame_count(self):
         instance = Popen(["avprobe", self.file.filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        # TODO shorter code pls
         output = ""
         for line in instance.stderr:
             output += line.decode("utf8")
@@ -181,6 +180,3 @@ class Process(Thread):
         return_code = instance.wait()
         if return_code != 0:
             yield {"return_code": return_code, "last_lines": last_lines}
-
-    def stop_avconv(self):
-        pass
