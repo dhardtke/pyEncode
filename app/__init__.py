@@ -20,7 +20,7 @@ app.config["LANGUAGES"] = {
     "de": "Deutsch"
 }
 app.config["BASE_DIR"] = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(app.config["BASE_DIR"], "data", "app.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.abspath(os.path.join(app.config["BASE_DIR"], "data", "app.db"))
 print(app.config["SQLALCHEMY_DATABASE_URI"])
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["THREADS_PER_PAGE"] = 2  # TODO?
