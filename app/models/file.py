@@ -25,3 +25,11 @@ class File(BaseModel):
 
     def __repr__(self):
         return "<File %r>" % self.id
+
+    def clear(self):
+        self.avconv_progress = 0
+        self.avconv_eta = 0
+        self.avconv_bitrate = 0
+        self.avconv_time = 0
+        self.avconv_size = 0
+        self.avconv_fps = 0

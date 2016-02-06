@@ -33,6 +33,7 @@ class ProcessRepository:
             # update status
             file = File.query.filter_by(id=file_id).first()
             file.status = StatusMap.failed.value
+            file.clear()
             db.session.commit()
 
             # emit file_done event
@@ -119,15 +120,9 @@ class ProcessRepository:
         ProcessRepository.processes.pop(file.id)
 
         # update status and set attributes to zero
-        db.session.query(File).filter_by(id=file.id).update({
-            "status": StatusMap.failed.value,
-            "avconv_progress": 0,
-            "avconv_eta": 0,
-            "avconv_bitrate": 0,
-            "avconv_time": 0,
-            "avconv_size": 0,
-            "avconv_fps": 0
-        })
+        file = db.session.query(File).filter_by(id=file.id).first()
+        file.status = StatusMap.failed.value
+        file.clear()
         db.session.commit()
 
         # check if it's necessary to start new processes
