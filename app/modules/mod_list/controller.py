@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, render_template, abort, request
 from flask.ext.babel import gettext as _
 from flask.ext.login import login_required
@@ -6,8 +8,8 @@ from app import db
 from app.library.formatters import human_size, filename_description
 from app.models.file import File
 from app.models.package import Package
-from app.modules.mod_process.status_map import StatusMap
 from app.modules.mod_process.process_repository import ProcessRepository
+from app.modules.mod_process.status_map import StatusMap
 
 mod_list = Blueprint("mod_list", __name__, url_prefix="/list")
 
@@ -55,6 +57,8 @@ def move_package():
 
     package.queue = not package.queue
     db.session.commit()
+
+    # TODO respect order?!
 
     return ""
 
@@ -154,5 +158,38 @@ def delete_file():
 
     # check if it's necessary to start new processes
     ProcessRepository.check_and_start_processes()
+
+    return ""
+
+
+@mod_list.route("/update_order", methods=["POST"])
+@login_required
+def update_order():
+    which = request.form["which"]  # "package" or "file"
+
+    if which != "package" and which != "file":
+        abort(404)
+
+    new_order = json.loads(request.form["new_order"])
+
+    # TODO more efficient way (less queries) to do this
+    # by just querying for all packages or all files in that package
+    # once
+
+    new_position = 0
+    for element_id in new_order:
+        if which == "package":
+            element = Package.query.filter_by(id=element_id).first()
+        else:
+            element = File.query.filter_by(id=element_id).first()
+
+        if not element:
+            continue
+
+        element.position = new_position
+
+        new_position += 1
+
+    db.session.commit()
 
     return ""

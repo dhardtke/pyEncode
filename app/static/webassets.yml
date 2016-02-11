@@ -55,8 +55,8 @@ list.js:
     - base.js # inherit
     - _statusbar.js # inherit
     - js/list.js
-    #- contents: # do not minify the following assets again
-    #  - bower_components/html.sortable/dist/html.sortable.min.js
+    - contents: # do not minify the following assets again
+      - bower_components/html.sortable/dist/html.sortable.min.js
   filters:
     - jsmin
   output: packed_list.js

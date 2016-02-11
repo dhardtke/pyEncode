@@ -2,16 +2,6 @@ $(function () {
     var $body = $("body");
     var $confirmationModal = $("#confirm-modal");
 
-    /*
-     $.ajaxSetup({
-     complete: function () {
-     // initialize sortable after *every* AJAX request (delete of package, adding a new package, etc.)
-     // init_sortable();
-     // TODO
-     }
-     });
-     */
-
     // package actions
     $body.on("click", ".package .heading .actions a", function (e) {
         e.preventDefault();
@@ -94,6 +84,9 @@ $(function () {
                         setTimeout(function () {
                             $("#package" + packageId).addClass("in");
                         }, 100);
+
+                        // initialize sortable again
+                        init_sortable();
                     }(packageId));
                 });
                 break;
@@ -123,49 +116,52 @@ $(function () {
                 // reload list using AJAX
                 // .modal-backdrop doesn't get removed automatically?!?
                 $(".modal-backdrop").remove();
-                $(".container > .main").parent().load(window.location.href + " .main");
+                $(".container > .main").parent().load(window.location.href + " .main", function () {
+                    // initialize sortable again
+                    init_sortable();
+                });
             });
         }
 
     });
 
     // sortable list
-    // init_sortable();
+    init_sortable();
 });
 
 function init_sortable() {
     $("#packages").sortable({
         forcePlaceholderSize: true,
         handle: ".trigger"
-    }).on("sortupdate", sortupdate);
+    }).on("sortupdate", store_order);
 
-    $(".mainlist").sortable({
+    $(".files").sortable({
         forcePlaceholderSize: true,
         handle: ".trigger"
-    }).on("sortupdate", sortupdate);
+    }).on("sortupdate", store_order);
 }
 
-function sortupdate(ignore, ui) {
-    // build new order array to store in DB
+function store_order(ignore, ui) {
     // determine what type of item is being sorted
+    var $item = ui.item;
+    var which = $item.hasClass("file") ? "file" : "package";
 
     var selector = [];
     // parent container selector
     selector["package"] = "#packages";
-    selector["file"] = ".mainlist";
+    selector["file"] = ".files";
 
-    var $item = ui.item;
-    var which = $item.hasClass("file") ? "file" : "package";
-    var packageId = which == "package" ? $item.attr("data-packageid") : $item.parent().parent().attr("data-packageid");
+    var packageId = $item.parents(".package").data("package-id");
 
+    // build new order array to store in DB
     var newOrder = [];
     $item.parents(selector[which]).find("li." + which).each(function (index, element) {
-        newOrder.push(parseInt($(element).attr("data-" + which + "id")));
+        newOrder.push(parseInt($(element).attr("data-" + which + "-id")));
     });
-    $.post("/package", {
-        action: "new_position",
+
+    $.post("/list/update_order", {
         which: which,
-        packageId: packageId,
+        // package_id: packageId,
         new_order: JSON.stringify(newOrder)
     });
 }

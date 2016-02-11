@@ -1,3 +1,5 @@
+import json
+
 from app import db
 from app.models.file import File
 from app.models.package import Package
@@ -94,4 +96,31 @@ class TestModList(NoLoginBaseTestCase):
         self.assert404(self.client.post("/list/delete_package", data=dict(package_id=-1)))
         return
 
-        # TODO more tests
+    def test_update_order(self):
+        package2 = Package(queue=True, title="Dummy Package 2")
+        db.session.add(package2)
+        p2_file1 = File(filename="dummy.mkv", size=100 * 1024, status=StatusMap.processing.value)
+        p2_file2 = File(filename="dummy.mkv", size=100 * 1024, status=StatusMap.queued.value)
+        db.session.add(p2_file1, p2_file2)
+        package2.files.append(p2_file1)
+        package2.files.append(p2_file2)
+        db.session.commit()
+
+        self.client.post("/list/update_order", data=dict(which="package", new_order=json.dumps([package2.id, self.package.id])))
+        self.assertEquals(Package.query.filter_by(id=package2.id).first().position, 0)
+        self.assertEquals(Package.query.filter_by(id=self.package.id).first().position, 1)
+
+        self.client.post("/list/update_order", data=dict(which="package", new_order=json.dumps([self.package.id, package2.id])))
+        self.assertEquals(Package.query.filter_by(id=package2.id).first().position, 1)
+        self.assertEquals(Package.query.filter_by(id=self.package.id).first().position, 0)
+
+        self.client.post("/list/update_order", data=dict(which="file", new_order=json.dumps([p2_file2.id, p2_file1.id])))
+        self.assertEquals(File.query.filter_by(id=p2_file2.id).first().position, 0)
+        self.assertEquals(File.query.filter_by(id=p2_file1.id).first().position, 1)
+
+        self.client.post("/list/update_order", data=dict(which="file", new_order=json.dumps([p2_file1.id, p2_file2.id])))
+        self.assertEquals(File.query.filter_by(id=p2_file2.id).first().position, 1)
+        self.assertEquals(File.query.filter_by(id=p2_file1.id).first().position, 0)
+
+        self.assert404(self.client.post("/list/update_order", data=dict(which="invalid", new_order="")))
+        return

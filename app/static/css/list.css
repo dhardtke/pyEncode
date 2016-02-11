@@ -51,32 +51,32 @@
     margin-left: 5px;
 }
 
-.package .mainlist {
+.package .files {
     margin-left: 10px;
 }
 
-.package .mainlist .info {
+.package .files .info {
     font-size: 13px;
     margin-bottom: 5px;
 }
 
-.package .mainlist .file {
+.package .files .file {
     border-top: 1px solid #D3D3D3;
     padding-top: 5px;
 }
 
-.package .mainlist .file .status {
+.package .files .file .status {
     font-weight: normal;
     font-size: 13px;
     font-style: italic;
 }
 
-.package .mainlist .sub {
+.package .files .sub {
     font-size: 13px;
     margin-bottom: 5px;
 }
 
-.package .mainlist .sub a {
+.package .files .sub a {
     text-decoration: none;
 }
 
