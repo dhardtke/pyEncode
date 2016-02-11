@@ -2,7 +2,6 @@ from flask.ext.login import UserMixin
 
 from app import db
 from app.models.base_model import BaseModel
-from app.models.package import Package
 
 
 class User(BaseModel, UserMixin):
@@ -13,6 +12,9 @@ class User(BaseModel, UserMixin):
     password = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean())
     language = db.Column(db.String(2))
+
+    # relationships
+    packages = db.relationship("Package", backref="user", cascade="all, delete-orphan")
 
     def __init__(self, username, email, password):
         self.username = username

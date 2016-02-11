@@ -18,3 +18,13 @@ class BaseTestCase(TestCase):
     def tearDown(self):
         db.session.remove()
         db.drop_all()
+
+
+class NoLoginBaseTestCase(BaseTestCase):
+    # disable @login_required for this test
+    def create_app(self):
+        app = super().create_app()
+
+        app.config["LOGIN_DISABLED"] = True
+        app.login_manager.init_app(app)
+        return app

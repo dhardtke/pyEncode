@@ -13,9 +13,6 @@ class File(BaseModel):
     # foreign keys
     package_id = db.Column(db.Integer, db.ForeignKey("packages.id"))
 
-    # relations
-    package = db.relationship("Package", backref="files", cascade="all, delete-orphan", single_parent=True)
-
     avconv_eta = db.Column(db.Float(), default=0)  # in seconds so the user can format it
     avconv_progress = db.Column(db.Float(), default=0)
     avconv_bitrate = db.Column(db.Float(), default=0)

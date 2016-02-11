@@ -1,110 +1,132 @@
-/*
 $(function () {
-    $.ajaxSetup({
-        complete: function () {
-            // initialize sortable after *every* AJAX request (delete of package, adding a new package, etc.)
-            init_sortable();
-        }
-    });
+    var $body = $("body");
+    var $deletePackageModal = $("#deletePackageModal");
+    var $restartPackageModal = $("#restartPackageModal");
+
+    /*
+     $.ajaxSetup({
+     complete: function () {
+     // initialize sortable after *every* AJAX request (delete of package, adding a new package, etc.)
+     // init_sortable();
+     // TODO
+     }
+     });
+     */
 
     // package actions
-    $("body").on("click", ".package .heading .actions a", function (e) {
+    $body.on("click", ".package .heading .actions a", function (e) {
         e.preventDefault();
+
         var which = $(this).attr("class");
         var $element = $(this);
         var $package = $element.parents(".package");
-        var packageId = $package.attr("data-packageId");
+
+        var packageId = $package.data("package-id");
 
         switch (which) {
             case "delete":
-                $("#deletePackageModal").data("packageId", packageId).modal("show");
+                $deletePackageModal.data("package-id", packageId).modal("show");
                 break;
 
             case "move":
-                $.post("/package", {"packageId": packageId, "action": "move"}).done(function (data) {
+                $.post("/list/move_package", {"package_id": packageId}).done(function (ignore) {
                     $package.slideUp("fast", function () {
                         $(this).remove();
                     });
+
                     notify("success", lang["moving_package_successful"]);
                 });
                 break;
 
             case "restart":
-                $("#restartPackageModal").data("packageId", packageId).modal("show");
+                $restartPackageModal.data("package-id", packageId).modal("show");
                 break;
         }
-        return false;
     });
 
     // file actions
-    $("body").on("click", ".package .mainlist .actions a", function (e) {
+    $body.on("click", ".package .mainlist .actions a", function (e) {
         e.preventDefault();
+
         var which = $(this).attr("class");
+
         var $element = $(this);
         var $package = $element.parents(".package");
-        var packageId = $package.attr("data-packageId");
         var $file = $element.parents("li.file");
-        var fileId = $file.attr("data-fileId");
+
+        var packageId = $package.data("package-id");
+        var fileId = $file.data("file-id");
 
         switch (which) {
             case "delete":
-                $.post("/file", {"fileId": fileId, "action": "delete"}).done(function (response) {
-                    if ($package.find(".file").length == 1) {
-                        // delete whole package because only this file was left
+                if ($package.find(".file").length == 1) {
+                    // delete whole package because only this file was left
+                    $.post("/list/delete_package", {"package_id": packageId}).done(function () {
                         $package.slideUp("fast", function () {
                             $(this).remove();
                         });
-                    } else {
+
+                        notify("success", lang["deleting_package_successful"]);
+                    });
+                } else {
+                    $.post("/list/delete_file", {"file_id": fileId}).done(function () {
                         $file.slideUp("fast", function () {
                             $(this).remove();
                         });
-                    }
-                });
+                    });
+                }
+
                 break;
 
             case "restart":
-                $.post("/file", {"fileId": fileId, "action": "restart"}).done(function (data) {
+                $.post("/list/restart_file", {"file_id": fileId}).done(function () {
                     // reload list using AJAX
-                    $(".container > .main").parent().load(window.location.href, function () {
+                    $(".container > .main").parent().load(window.location.href + " .main", function () {
                         // expand package
                         // $("#package" + packageId).collapse().collapse("show");
                         // does not work - wtf?
                         setTimeout(function () {
                             $("#package" + packageId).addClass("in");
-                        }, 50);
+                        }, 100);
                     }(packageId));
                 });
                 break;
         }
     });
 
-    $("body").on("click", "#deletePackageModal button[type=submit]", function (e) {
+    $body.on("click", "#deletePackageModal button[type=submit]", function (e) {
         e.preventDefault();
-        $("#deletePackageModal").modal("hide");
-        var packageId = $("#deletePackageModal").data("packageId");
-        var $package = $(".package[data-packageid='" + packageId + "']");
 
-        $.post("/package", {"packageId": packageId, "action": "delete"}).done(function (data) {
+        $deletePackageModal.modal("hide");
+        var packageId = $deletePackageModal.data("package-id");
+        var $package = $(".package[data-package-id='" + packageId + "']");
+
+        $.post("/list/delete_package", {"package_id": packageId}).done(function () {
             $package.slideUp("fast", function () {
                 $(this).remove();
             });
+
             notify("success", lang["deleting_package_successful"]);
         });
     });
 
-    $("body").on("click", "#restartPackageModal button[type=submit]", function (e) {
+    $body.on("click", "#restartPackageModal button[type=submit]", function (e) {
         e.preventDefault();
-        $("#restartPackageModal").modal("hide");
-        var packageId = $("#restartPackageModal").data("packageId");
 
-        $.post("/package", {"packageId": packageId, "action": "restart"}).done(function (data) {
+        $restartPackageModal.modal("hide");
+
+        var packageId = $restartPackageModal.data("package-id");
+
+        $.post("/list/restart_package", {"package_id": packageId}).done(function () {
             // reload list using AJAX
-            $(".container > .main").parent().load(window.location.href);
+            // .modal-backdrop doesn't get removed automatically?!?
+            $(".modal-backdrop").remove();
+            $(".container > .main").parent().load(window.location.href + " .main");
         });
     });
 
     // sortable list
-    init_sortable();
+    // init_sortable();
 });
 
 function init_sortable() {
@@ -119,7 +141,7 @@ function init_sortable() {
     }).on("sortupdate", sortupdate);
 }
 
-function sortupdate(e, ui) {
+function sortupdate(ignore, ui) {
     // build new order array to store in DB
     // determine what type of item is being sorted
 
@@ -143,4 +165,3 @@ function sortupdate(e, ui) {
         new_order: JSON.stringify(newOrder)
     });
 }
-*/

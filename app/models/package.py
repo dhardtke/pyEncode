@@ -13,7 +13,7 @@ class Package(BaseModel):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
     # relationships
-    user = db.relationship("User", backref="packages", cascade="all, delete-orphan", single_parent=True)
+    files = db.relationship("File", backref="package", cascade="all, delete-orphan")
 
     def __repr__(self):
         return "<Package %r>" % self.id

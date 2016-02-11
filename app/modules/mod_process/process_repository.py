@@ -27,20 +27,32 @@ class ProcessRepository:
 
     @staticmethod
     def cancel_all_processes():
-        for file_id in ProcessRepository.processes:
-            # stop thread
-            ProcessRepository.processes[file_id].stop()
-            # update status
-            file = File.query.filter_by(id=file_id).first()
-            file.status = StatusMap.failed.value
-            file.clear()
-            db.session.commit()
+        # iterate over a copy of processes because cancel_process modifies the dictionary
+        # while we are iterating over it
+        for file_id in ProcessRepository.processes.copy():
+            ProcessRepository.cancel_process(file_id)
 
-            # emit file_done event
-            socketio.emit("file_done", {"data": formatted_file_data(file)})
+        return
 
-        # clear processes
-        ProcessRepository.processes.clear()
+    @staticmethod
+    def is_running(file_id):
+        return file_id in ProcessRepository.processes
+
+    @staticmethod
+    def cancel_process(file_id):
+        # stop thread
+        ProcessRepository.processes[file_id].stop()
+        # update status
+        file = File.query.filter_by(id=file_id).first()
+        file.status = StatusMap.failed.value
+        file.clear()
+        db.session.commit()
+
+        # emit file_done event
+        socketio.emit("file_done", {"data": formatted_file_data(file)})
+
+        # remove from processes dict
+        ProcessRepository.processes.pop(file_id)
 
         return
 

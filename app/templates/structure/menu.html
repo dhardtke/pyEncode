@@ -27,7 +27,7 @@
                     </li>
                     <li{% if request.path == url_for("mod_list.show", which="queue") %} class="active"{% endif %}>
                         <a href="{{ url_for("mod_list.show", which="queue") }}">
-                            <i class="fa fa-fw fa-inbox"></i> {{ _("Packages") }}
+                            <i class="fa fa-fw fa-inbox"></i> {{ _("Queue") }}
                         </a>
                     </li>
                     <li{% if request.path == url_for("mod_list.show", which="collector") %} class="active"{% endif %}>

@@ -3,18 +3,10 @@ import os
 from flask.ext.babel import gettext as _
 from mock import MagicMock
 
-from tests import BaseTestCase
+from tests import NoLoginBaseTestCase
 
 
-class TestModFilemanager(BaseTestCase):
-    # disable @login_required for this test
-    def create_app(self):
-        app = super().create_app()
-
-        app.config["LOGIN_DISABLED"] = True
-        app.login_manager.init_app(app)
-        return app
-
+class TestModFilemanager(NoLoginBaseTestCase):
     def test_filemanager(self):
         rv = self.client.get("/filemanager/")
         self.assertStatus(rv, 200)

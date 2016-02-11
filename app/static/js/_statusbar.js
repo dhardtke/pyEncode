@@ -101,7 +101,7 @@ $(function () {
 
                         if (window.location.href.indexOf("/list/") != -1) {
                             // this is some list page, reload list using AJAX
-                            $(".container > .main").parent().load(window.location.href);
+                            $(".container > .main").parent().load(window.location.href + " .main");
                         }
                         break;
 

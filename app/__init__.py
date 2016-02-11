@@ -12,6 +12,9 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.assets import Environment
 from flask.ext.babel import Babel
 
+from sqlalchemy.engine import Engine
+from sqlalchemy import event
+
 # Define the WSGI application object
 app = Flask(__name__)
 app.config["CSRF_ENABLED"] = True
@@ -94,6 +97,14 @@ app.register_blueprint(mod_auth)
 app.register_blueprint(mod_list)
 app.register_blueprint(mod_statusbar)
 app.register_blueprint(mod_filemanager)
+
+
+# enable foreign_keys for sqlite
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 
 # Build the database
 db.create_all()

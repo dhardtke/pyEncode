@@ -40,7 +40,7 @@
 							{{ _("Total size") }}: <strong>{{ package.size }}</strong>
 						</div>-->
                         {% for file in package.files %}
-                            <li class="file" data-fileId="{{ file.id }}">
+                            <li class="file" data-file-id="{{ file.id }}">
                                 <div class="row">
                                     {% if file.status == StatusMap.queued.value %}
                                         {% set text_class = "text-muted" %}

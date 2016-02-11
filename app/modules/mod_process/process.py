@@ -4,7 +4,6 @@ import math
 import os
 import re
 import subprocess
-
 from collections import deque
 from threading import Thread
 
@@ -51,11 +50,7 @@ class Process(Thread):
 
         # app.logger.debug("Starting encoding of " + str(file.filename) + " with " + " ".join(map(str, cmd)))
 
-        for info in Process.run_avconv(cmd, frame_count):
-            # return if Thread has been marked as inactive
-            if not self.active:
-                return
-
+        for info in self.run_avconv(cmd, frame_count):
             if info["return_code"] != -1:
                 # app.logger.debug("Error occured while running avconv. Last five lines of output: ")
                 # last_5 = "\n".join(total_output.splitlines()[-5:])
@@ -144,8 +139,7 @@ class Process(Thread):
         self.active = False
         return
 
-    @staticmethod
-    def run_avconv(cmd, frame_count):
+    def run_avconv(self, cmd, frame_count):
         instance = Popen(map(str, cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         reader = io.TextIOWrapper(instance.stderr, encoding="utf8")
 
@@ -154,6 +148,10 @@ class Process(Thread):
 
         # oddly avconv writes to stderr instead of stdout
         for line in reader:
+            # kill avconv when not being active anymore
+            if not self.active:
+                instance.kill()
+
             # call sleep, see https://stackoverflow.com/questions/34599578/using-popen-in-a-thread-blocks-every-incoming-flask-socketio-request
             eventlet.sleep()
 

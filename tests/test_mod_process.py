@@ -86,3 +86,7 @@ class TestModProcess(BaseTestCase):
         # self.assertEqual(File.query.filter_by(id=file.id).first().status, StatusMap.finished.value)
         # print(File.query.filter_by(id=file.id).first().status)
         return
+
+    def test_stop_process(self):
+        # TODO
+        pass
