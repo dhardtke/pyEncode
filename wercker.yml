@@ -1,7 +1,11 @@
 box: python:3.5.1
 build:
   steps:
-    - pip-install
     - script:
-          name: flask tests
-          code: python run_tests.py
+      name: install dependencies
+      code: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+    - script:
+        name: flask tests
+        code: python run_tests.py
