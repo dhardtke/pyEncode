@@ -4,7 +4,6 @@ build:
     - script:
       name: install dependencies
       code: |
-          # sudo pip install --upgrade pip
           sudo easy_install -U pip
           sudo pip install -r requirements.txt
     - script:

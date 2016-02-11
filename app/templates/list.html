@@ -36,7 +36,7 @@
                         <span>{{ package.files_finished }} / {{ package.files_total }} {{ _("files") }}</span>
                     </div>
                     <ol class="mainlist collapse" id="package{{ package.id }}">
-						<!--<div class="info">
+                        <!--<div class="info">
 							{{ _("Total size") }}: <strong>{{ package.size }}</strong>
 						</div>-->
                         {% for file in package.files %}
@@ -97,37 +97,20 @@
             {% endfor %}
         </ol>
     </div>
-    <div class="modal fade" id="deletePackageModal" tabindex="-1">
+    <div class="modal fade" id="confirm-modal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title">{{ _("Delete Package") }}</h4>
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    <h4 class="modal-title">{{ _("Confirmation required") }}</h4>
                 </div>
                 <div class="modal-body">
-                    {{ _("Do you really want to delete this package?") }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal">
-                        <i class="fa fa-ban fa-fw"></i> {{ _("No") }}
-                    </button>
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fa fa-fw fa-plus"></i> {{ _("Yes") }}
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="restartPackageModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title">{{ _("Restart Package") }}</h4>
-                </div>
-                <div class="modal-body">
-                    {{ _("Do you really want to restart this package?") }}
+                    <span class="text hidden" data-what="delete_package">
+                        {{ _("Do you really want to delete this package?") }}
+                    </span>
+                    <span class="text hidden" data-what="restart_package">
+                        {{ _("Do you really want to restart this package?") }}
+                    </span>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-dismiss="modal">

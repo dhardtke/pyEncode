@@ -1,7 +1,6 @@
 $(function () {
     var $body = $("body");
-    var $deletePackageModal = $("#deletePackageModal");
-    var $restartPackageModal = $("#restartPackageModal");
+    var $confirmationModal = $("#confirm-modal");
 
     /*
      $.ajaxSetup({
@@ -16,16 +15,20 @@ $(function () {
     // package actions
     $body.on("click", ".package .heading .actions a", function (e) {
         e.preventDefault();
+        e.stopPropagation();
 
         var which = $(this).attr("class");
         var $element = $(this);
         var $package = $element.parents(".package");
 
         var packageId = $package.data("package-id");
+        $confirmationModal.data("package-id", packageId);
 
         switch (which) {
             case "delete":
-                $deletePackageModal.data("package-id", packageId).modal("show");
+                $confirmationModal.find(".text").addClass("hidden");
+                $confirmationModal.find(".text[data-what='delete_package']").removeClass("hidden");
+                $confirmationModal.modal("show");
                 break;
 
             case "move":
@@ -39,7 +42,9 @@ $(function () {
                 break;
 
             case "restart":
-                $restartPackageModal.data("package-id", packageId).modal("show");
+                $confirmationModal.find(".text").addClass("hidden");
+                $confirmationModal.find(".text[data-what='restart_package']").removeClass("hidden");
+                $confirmationModal.modal("show");
                 break;
         }
     });
@@ -47,6 +52,7 @@ $(function () {
     // file actions
     $body.on("click", ".package .mainlist .actions a", function (e) {
         e.preventDefault();
+        e.stopPropagation();
 
         var which = $(this).attr("class");
 
@@ -94,35 +100,33 @@ $(function () {
         }
     });
 
-    $body.on("click", "#deletePackageModal button[type=submit]", function (e) {
+    $confirmationModal.find("button[type='submit']").on("click", function (e) {
         e.preventDefault();
 
-        $deletePackageModal.modal("hide");
-        var packageId = $deletePackageModal.data("package-id");
+        $confirmationModal.modal("hide");
+
+        var packageId = $confirmationModal.data("package-id");
         var $package = $(".package[data-package-id='" + packageId + "']");
 
-        $.post("/list/delete_package", {"package_id": packageId}).done(function () {
-            $package.slideUp("fast", function () {
-                $(this).remove();
+        if (!$confirmationModal.find(".text[data-what='delete_package']").hasClass("hidden")) {
+            // delete package
+            $.post("/list/delete_package", {"package_id": packageId}).done(function () {
+                $package.slideUp("fast", function () {
+                    $(this).remove();
+                });
+
+                notify("success", lang["deleting_package_successful"]);
             });
+        } else {
+            // restart package
+            $.post("/list/restart_package", {"package_id": packageId}).done(function () {
+                // reload list using AJAX
+                // .modal-backdrop doesn't get removed automatically?!?
+                $(".modal-backdrop").remove();
+                $(".container > .main").parent().load(window.location.href + " .main");
+            });
+        }
 
-            notify("success", lang["deleting_package_successful"]);
-        });
-    });
-
-    $body.on("click", "#restartPackageModal button[type=submit]", function (e) {
-        e.preventDefault();
-
-        $restartPackageModal.modal("hide");
-
-        var packageId = $restartPackageModal.data("package-id");
-
-        $.post("/list/restart_package", {"package_id": packageId}).done(function () {
-            // reload list using AJAX
-            // .modal-backdrop doesn't get removed automatically?!?
-            $(".modal-backdrop").remove();
-            $(".container > .main").parent().load(window.location.href + " .main");
-        });
     });
 
     // sortable list
