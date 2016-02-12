@@ -7,7 +7,7 @@ class Package(BaseModel):
 
     title = db.Column(db.String(300))
     queue = db.Column(db.Boolean())
-    position = db.Column(db.Integer())
+    position = db.Column(db.Integer(), default=0)
 
     # foreign keys
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))

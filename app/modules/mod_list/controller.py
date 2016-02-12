@@ -56,9 +56,17 @@ def move_package():
         abort(404)
 
     package.queue = not package.queue
-    db.session.commit()
+    # respect the position by using the position of the last package of the target (package.queue)
+    last_package = Package.query.filter_by(queue=package.queue).filter(Package.id != package.id).order_by(
+        Package.position.desc()).limit(1).first()
+    last_package_position = -1
 
-    # TODO respect order?!
+    # only use last_package if available
+    if last_package is not None:
+        last_package_position = last_package.position
+
+    package.position = last_package_position + 1
+    db.session.commit()
 
     return ""
 
