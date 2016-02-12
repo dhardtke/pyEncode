@@ -44,12 +44,12 @@
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li{{ ' class="active"'|safe if get_locale == 'de' else '' }}>
-                            <a href="{# url_for("set_language", language="de") #}">
+                            <a href="{{ url_for("mod_auth.set_language", language="de") }}">
                                 <i class="fa flag flag-de"></i> {{ _("German") }}
                             </a>
                         </li>
                         <li{{ ' class="active"'|safe if get_locale == "en" else "" }}>
-                            <a href="{# url_for("set_language", language="en") #}">
+                            <a href="{{ url_for("mod_auth.set_language", language="en") }}">
                                 <i class="fa flag flag-us"></i> {{ _("English") }}
                             </a>
                         </li>

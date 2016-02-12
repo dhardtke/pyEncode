@@ -3,10 +3,11 @@ import warnings
 from configparser import ConfigParser
 
 # Import flask and template operators
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 
 # Flask Extensions
 from flask.ext.compress import Compress
+from flask.ext.login import current_user
 from flask.ext.socketio import SocketIO
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.assets import Environment
@@ -18,12 +19,9 @@ from sqlalchemy import event
 # Define the WSGI application object
 app = Flask(__name__)
 app.config["CSRF_ENABLED"] = True
-app.config["LANGUAGES"] = {
-    "en": "English",
-    "de": "Deutsch"
-}
 app.config["BASE_DIR"] = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.abspath(os.path.join(app.config["BASE_DIR"], "data", "app.db"))
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.abspath(
+    os.path.join(app.config["BASE_DIR"], "data", "app.db"))
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["THREADS_PER_PAGE"] = 2  # TODO?
 
@@ -71,13 +69,21 @@ db = SQLAlchemy(app)
 babel = Babel(app)
 Compress(app)
 
-# TODO async_mode, see https://stackoverflow.com/questions/35235797/socketio-emit-doesnt-work-when-interacting-using-popen-on-windows-in-a-thread
-socketio = SocketIO(app)  # , async_mode="threading"
-
 
 @babel.localeselector
 def get_locale():
-    return request.accept_languages.best_match(app.config["LANGUAGES"].keys())
+    # try to guess the language from the user accept header the browser transmits. We support de/en.
+    # The best match wins.
+    if "language" not in session:
+        if not current_user.is_authenticated:
+            session["language"] = request.accept_languages.best_match(["en", "de"])
+        else:
+            session["language"] = current_user.language
+
+    return session["language"]
+
+
+socketio = SocketIO(app)
 
 
 @app.errorhandler(404)
@@ -105,6 +111,7 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
+
 
 # Build the database
 db.create_all()

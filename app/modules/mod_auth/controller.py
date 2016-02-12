@@ -1,11 +1,11 @@
 # Import flask dependencies
 import hashlib
 
-from flask import Blueprint, render_template, flash, request, url_for, redirect
+from flask import Blueprint, render_template, flash, request, url_for, redirect, abort, session
 from flask.ext.babel import gettext as _
 from flask.ext.login import LoginManager, login_user, login_required, logout_user, current_user
 
-from app import app
+from app import app, db
 from app.models.user import User
 from .forms import LoginForm
 
@@ -51,3 +51,16 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for("mod_auth.login"))
+
+
+@mod_auth.route("/lang/<string:language>")
+@login_required
+def set_language(language):
+    if language in ("de", "en"):
+        current_user.language = language
+        db.session.commit()
+
+        session["language"] = language
+        return redirect(request.referrer or url_for("mod_index.index"))
+    else:
+        abort(404)
