@@ -170,25 +170,19 @@ def update_order():
     if which != "package" and which != "file":
         abort(404)
 
+    # new_order is a list of entity IDs in their new order
+    # i.e. [1, 2, 3] means ID 1 first, ID 2 second, ID 3 on the third place
     new_order = json.loads(request.form["new_order"])
 
-    # TODO more efficient way (less queries) to do this
-    # by just querying for all packages or all files in that package
-    # once
+    # query all elements at once
+    if which == "package":
+        elements = Package.query.filter(Package.id.in_(new_order)).all()
+    else:
+        elements = File.query.filter(File.id.in_(new_order)).all()
 
-    new_position = 0
-    for element_id in new_order:
-        if which == "package":
-            element = Package.query.filter_by(id=element_id).first()
-        else:
-            element = File.query.filter_by(id=element_id).first()
-
-        if not element:
-            continue
-
-        element.position = new_position
-
-        new_position += 1
+    for element in elements:
+        # the new position is the position of the index in the list new_order
+        element.position = new_order.index(element.id)
 
     db.session.commit()
 
