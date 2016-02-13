@@ -1,5 +1,7 @@
 import os
 
+from app.library.extensions import allowed_extensions
+
 
 def human_size(num):
     for x in ["bytes", "KiB", "MiB", "GiB"]:
@@ -30,15 +32,6 @@ def formatted_file_data(file):
 
 
 def filename_description(filename):
-    allowed_extensions = {
-        "mkv": "Matroska-Video",
-        "mp4": "MPEG-4",
-        "wmv": "Windows Media Video",
-        "mov": "Quicktime Movie",
-        "m2ts": "BDAV Video File",
-        "f4v": "Flash Video"
-    }
-
     extension = os.path.splitext(filename)[1][1:]
 
     if extension not in allowed_extensions:
