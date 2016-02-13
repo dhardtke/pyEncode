@@ -54,11 +54,12 @@ def logout():
 
 
 @mod_auth.route("/lang/<string:language>")
-@login_required
 def set_language(language):
     if language in ("de", "en"):
-        current_user.language = language
-        db.session.commit()
+        # only store language in database when the User is logged in
+        if current_user.is_authenticated:
+            current_user.language = language
+            db.session.commit()
 
         session["language"] = language
         return redirect(request.referrer or url_for("mod_index.index"))
