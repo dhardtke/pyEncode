@@ -11,3 +11,5 @@ bind = "0.0.0.0:" + environ.get("PORT", "7000")
 max_requests = 1000
 worker_class = "eventlet"
 workers = max_workers()
+daemon = True
+pidfile = "pyencode.pid"

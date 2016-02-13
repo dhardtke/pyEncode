@@ -22,9 +22,15 @@ Deployment
 ============
 We recommend using `gunicorn` to run pyEncode:
 
-Install `gunicorn` using `pip install gunicorn`. Afterwards, you can use the `gunicorn.conf.py` that pyEncode comes with, or create your own:
+Install `gunicorn` using `pip install gunicorn`.
 
-`gunicorn -c gunicorn.conf.py app:app`
+Afterwards, you can use the `gunicorn.conf.py` that pyEncode comes with, or create your own.
+
+Run `gunicorn -c gunicorn.conf.py app:app` to use `gunicorn.conf.py` that pyEncode comes with.
+
+By default this configures gunicorn to use as many worker threads as the machine running pyEncode on CPUs have.
+
+It also enables the daemon mode, so that when you start pyEncode, it is being detached into the background.
 
 Running Tests
 ============
