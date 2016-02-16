@@ -1,4 +1,5 @@
 import os
+import re
 
 from app.library.extensions import allowed_extensions
 
@@ -18,16 +19,22 @@ def human_time(seconds):
     return formatted
 
 
+def duration_to_seconds(duration):
+    hrs, mins, secs, hsecs = list(map(int, re.split(r"[:.]", duration)))
+
+    return hrs * 3600 + mins * 60 + secs + hsecs / 1000
+
+
 def formatted_file_data(file):
     return {
         "id": file.id,
-        "progress": file.avconv_progress,
+        "progress": file.ffmpeg_progress,
         "filename": os.path.basename(file.filename),  # show only filename, without path
-        "bitrate": file.avconv_bitrate,
-        "fps": file.avconv_fps,
+        "bitrate": file.ffmpeg_bitrate,
+        "fps": file.ffmpeg_fps,
         "size": human_size(file.size * 1024),  # in kB, calculate bytes and format via human_size() method
-        "time": human_time(file.avconv_time),
-        "eta": human_time(file.avconv_eta)
+        "time": human_time(file.ffmpeg_time),
+        "eta": human_time(file.ffmpeg_eta)
     }
 
 

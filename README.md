@@ -2,17 +2,15 @@ pyEncode
 ============
 [![wercker status](https://app.wercker.com/status/bb64a538d69c241f7b4c25c32b2d1a92/m "wercker status")](https://app.wercker.com/project/bykey/bb64a538d69c241f7b4c25c32b2d1a92)
 
-pyEncode is a wrapper for the audio and video processor avconv (TODO link).
+pyEncode is a wrapper for the audio and video processor ffmpeg (https://ffmpeg.org/).
 
 Requirements
 ============
-pyEncode has been written to run with Python 3.5.x and avconv from libav.
+pyEncode has been written to run with Python 3.5.x and above.
 
 Installation
 ============
 Run `pip install -r requirements.txt` in pyEncode's root directory to install all necessary third-party requirements.
-
-Afterwards, TODO...
 
 Development
 ============

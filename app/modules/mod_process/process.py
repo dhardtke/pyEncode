@@ -1,4 +1,4 @@
-# this class / module serves as a wrapper for the avconv process
+# this class / module serves as a wrapper for the ffmpeg process
 import io
 import math
 import os
@@ -11,6 +11,7 @@ import eventlet
 from eventlet.green.subprocess import Popen
 
 from app import db, config
+from app.library.formatters import duration_to_seconds
 from app.models.file import File
 from app.modules.mod_process.process_repository import ProcessRepository
 
@@ -18,8 +19,11 @@ from app.modules.mod_process.process_repository import ProcessRepository
 eventlet.monkey_patch(thread=True)
 
 # the pattern to fetch meta information of the current progress
-AVCONV_PATTERN = re.compile(
-    r"frame=\s*?([0-9]+)\s*?fps=\s*?([0-9]+)\s*?q=[0-9.]+\s*?size=\s*([0-9]+)kB\stime=([0-9.]+)\sbitrate=\s*?([0-9.]+)kbits/s")
+# frame=44448 fps= 14 q=-0.0 Lsize=  247192kB time=00:30:53.95 bitrate=1092.3kbits/s speed=0.577x
+# TODO
+# frame=  198 fps= 52 q=28.0 size=    1143kB time=00:00:06.92 bitrate=1353.6kbits/s speed=1.82x
+PROGRESS_PATTERN = re.compile(
+    r"frame=\s*?(\d+) fps=\s*?(\d+) q=(\-?[0-9.]+) L?size=\s*?(\d+)kB time=(.*) bitrate=([\d.]+)kbits/s speed=(\d.+)x")
 
 
 class Process(Thread):
@@ -30,7 +34,7 @@ class Process(Thread):
 
     def run(self):
         # probe file first
-        frame_count = self.avconv_probe_frame_count()
+        frame_count = self.ffmpeg_probe_frame_count()
 
         if frame_count == -1:
             # app.logger.debug("Probing of " + file.filename + " failed - aborting...")
@@ -44,15 +48,15 @@ class Process(Thread):
         filename_noext = os.path.split(os.path.splitext(original_filename)[0])[1]
         temp_filename = filename_noext + ".tmp"
 
-        cmd = ["avconv"]
+        cmd = ["ffmpeg"]
         cmd += self.collect_parameters()
         cmd.extend(["-y", path + "/" + temp_filename])
 
         # app.logger.debug("Starting encoding of " + str(file.filename) + " with " + " ".join(map(str, cmd)))
 
-        for info in self.run_avconv(cmd, frame_count):
+        for info in self.run_ffmpeg(cmd, frame_count):
             if info["return_code"] != -1:
-                # app.logger.debug("Error occured while running avconv. Last five lines of output: ")
+                # app.logger.debug("Error occured while running ffmpeg. Last five lines of output: ")
                 # last_5 = "\n".join(total_output.splitlines()[-5:])
                 # app.logger.debug(last_5)
                 # print(info["last_lines"])
@@ -61,8 +65,8 @@ class Process(Thread):
 
             # store information in database
             File.query.filter_by(id=self.file.id).update(
-                dict(avconv_eta=info["eta"], avconv_progress=info["progress"], avconv_bitrate=info["bitrate"],
-                     avconv_time=info["time"], avconv_size=info["size"], avconv_fps=info["fps"]))
+                dict(ffmpeg_eta=info["eta"], ffmpeg_progress=info["progress"], ffmpeg_bitrate=info["bitrate"],
+                     ffmpeg_time=info["time"], ffmpeg_size=info["size"], ffmpeg_fps=info["fps"]))
             db.session.commit()
 
             # tell ProcessRepository there's some progress going on
@@ -108,8 +112,8 @@ class Process(Thread):
         probe self.file and return frame count
     """
 
-    def avconv_probe_frame_count(self):
-        instance = Popen(["avprobe", self.file.filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    def ffmpeg_probe_frame_count(self):
+        instance = Popen(["ffprobe", self.file.filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         output = ""
         for line in instance.stderr:
@@ -119,7 +123,7 @@ class Process(Thread):
             eventlet.sleep()
 
         # TODO logging
-        # app.logger.debug("Probing with avprobe \"" + file.filename + "\"")
+        # app.logger.debug("Probing with ffprobe \"" + file.filename + "\"")
 
         fps_reg = re.findall(r"([0-9]*\.?[0-9]+) fps|tbr", output)
         if fps_reg is None:
@@ -127,11 +131,10 @@ class Process(Thread):
 
         fps = float(" ".join(fps_reg))
 
-        duration = re.findall(r"Duration: (.*?),", output)[0]
-        hrs, mins, secs, hsecs = list(map(int, re.split(r"[:.]", duration)))
+        duration = duration_to_seconds(re.findall(r"Duration: (.*?),", output)[0])
 
         # calculate the amount of frames for the calculation of progress
-        frame_count = int(math.ceil((hrs * 3600 + mins * 60 + secs + hsecs / 1000) * float(fps)))
+        frame_count = int(math.ceil(duration * float(fps)))
 
         return frame_count
 
@@ -139,16 +142,16 @@ class Process(Thread):
         self.active = False
         return
 
-    def run_avconv(self, cmd, frame_count):
+    def run_ffmpeg(self, cmd, frame_count):
         instance = Popen(map(str, cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         reader = io.TextIOWrapper(instance.stderr, encoding="utf8")
 
         # these two variables are just needed for when the processing fails, see below
         last_lines = deque(maxlen=5)  # parameter determines how many lines to keep
 
-        # oddly avconv writes to stderr instead of stdout
+        # oddly ffmpeg writes to stderr instead of stdout
         for line in reader:
-            # kill avconv when not being active anymore
+            # kill ffmpeg when not being active anymore
             if not self.active:
                 instance.kill()
 
@@ -158,15 +161,15 @@ class Process(Thread):
             # append current line to last_lines
             last_lines.append(line)
 
-            match = AVCONV_PATTERN.match(line)
+            match = PROGRESS_PATTERN.match(line)
 
             # first few lines have no match
             if match:
                 frame = int(match.group(1))  # current frame, needed for calculation of progress
                 fps = int(match.group(2))  # needed for calculation of remaining time
-                size = int(match.group(3))  # current size in kB
-                time = float(match.group(4))  # time already passed for converting, in seconds
-                bitrate = float(match.group(5))  # in kbits/s
+                size = int(match.group(4))  # current size in kB
+                time = duration_to_seconds(match.group(5))  # time already passed for converting, in seconds
+                bitrate = float(match.group(6))  # in kbits/s
                 progress = round((frame / float(frame_count)) * 100, 1)  # in %
 
                 frames_remaining = frame_count - frame  # needed for eta
