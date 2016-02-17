@@ -20,9 +20,8 @@ from app.modules.mod_process.process_repository import ProcessRepository
 eventlet.monkey_patch(thread=True)
 
 # the pattern to fetch meta information of the current progress
+# to match a line like
 # frame=44448 fps= 14 q=-0.0 Lsize=  247192kB time=00:30:53.95 bitrate=1092.3kbits/s speed=0.577x
-# TODO
-# frame=  198 fps= 52 q=28.0 size=    1143kB time=00:00:06.92 bitrate=1353.6kbits/s speed=1.82x
 PROGRESS_PATTERN = re.compile(
     r"frame=\s*?(\d+) fps=\s*?(\d+) q=(\-?[0-9.]+) L?size=\s*?(\d+)kB time=(.*) bitrate=([\d.]+)kbits/s speed=(\d.+)x")
 
