@@ -3,6 +3,7 @@ import io
 import math
 import os
 import re
+import shlex
 import subprocess
 from collections import deque
 from threading import Thread
@@ -46,11 +47,14 @@ class Process(Thread):
         path = split_path[0]
         original_filename = split_path[1]
         filename_noext = os.path.split(os.path.splitext(original_filename)[0])[1]
-        temp_filename = filename_noext + ".tmp"
+        # form output filename and store it in self.file for later use
+        self.file.output_filename = filename_noext + ".pyencode"
 
         cmd = ["ffmpeg"]
-        cmd += self.collect_parameters()
-        cmd.extend(["-y", path + "/" + temp_filename])
+        cmd.extend(["-i", self.file.filename])
+        # add parameters from config
+        cmd.extend(shlex.split(config.get("encoding", "parameters")))
+        cmd.extend(["-y", path + os.sep + self.file.output_filename])
 
         # app.logger.debug("Starting encoding of " + str(file.filename) + " with " + " ".join(map(str, cmd)))
 
@@ -72,41 +76,9 @@ class Process(Thread):
             # tell ProcessRepository there's some progress going on
             ProcessRepository.file_progress(self.file, info)
 
-        # TODO
-        # remove original file from disk
-        # print("os.remove(" + file.filename + ")")
-        # os.remove(file.filename)
-        # form new filename by replacing current resolution substring with the new resolution substring
-        # print("filename_noext = " + re.sub(r"(\d+p)", "720p", filename_noext))
-        # filename_noext = re.sub(r"(\d+p)", "720p", filename_noext)
-        # @todo auch das einstellbar machen, immerhin kann man ja auch ohne Resizen vorgehen
-
-        # full_path = path + "/" + filename_noext + "-selfmade" + ".mkv"
-        # print("os.rename(" + path + "/" + temp_filename + ", " + full_path + ")")
-        # os.rename(path + "/" + temp_filename, full_path)
-        # @todo beim umbenennen die Erweiterung erkennen, abhängig von der Ausgabeformatseinstellung
-        # @todo option für umbennen, z.B. -selfmade-Anhängung änderbar machen
-
         if self.active:
             ProcessRepository.file_done(self.file)
         return
-
-    def collect_parameters(self):
-        cmd = []
-        cmd.extend(["-i", self.file.filename])
-        # cmd.extend(["-vcodec", "libx264"])
-        cmd.extend(["-acodec", config["encoding"]["acodec"]])
-        cmd.extend(["-strict", config["encoding"]["strict"]])
-        cmd.extend(["-s", config["encoding"]["s"]])
-        cmd.extend(["-aspect", config["encoding"]["aspect"]])
-        cmd.extend(["-preset", config["encoding"]["preset"]])
-        cmd.extend(["-crf", config["encoding"]["crf"]])
-        # fix some files not being encodable
-        cmd.extend(["-c:a", "copy"])
-
-        # @todo add audio options and make them configurable
-        cmd.extend(["-f", "matroska"])
-        return cmd
 
     """
         probe self.file and return frame count

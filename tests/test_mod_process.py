@@ -1,3 +1,5 @@
+import os
+
 from mock import patch
 
 from app import socketio, app, db, config
@@ -72,7 +74,9 @@ class TestModProcess(BaseTestCase):
         config["general"]["parallel_processes"] = "1"
 
         # start processing
-        ProcessRepository.set_encoding_active(True)
+        with patch("os.rename"):
+            with patch("os.remove"):
+                ProcessRepository.set_encoding_active(True)
 
         self.assertTrue(mock_run.called)
         self.assertTrue(mock_run.call_count == 1)
@@ -85,6 +89,32 @@ class TestModProcess(BaseTestCase):
         # the status should be "finished" now
         # self.assertEqual(File.query.filter_by(id=file.id).first().status, StatusMap.finished.value)
         # print(File.query.filter_by(id=file.id).first().status)
+        return
+
+    @staticmethod
+    def test_file_done():
+        with patch("os.rename") as m_rename:
+            with patch("os.remove") as m_remove:
+                # add fake_file to database in order to test renaming
+                filename = "ThisIsAmazing.11.12.10.PyEncode.Is.The.Best.SEPARATOR.1080p.MP4-ABC.mp4"
+                path = "/this/path/is/fake"
+                fake_file = File(id=1, filename=path + os.sep + filename)
+                fake_file.output_filename = filename + ".pyencode"
+                db.session.add(fake_file)
+                db.session.commit()
+
+                # set options we want to test
+                config["encoding"]["delete_old_file"] = "True"
+                config["encoding"]["rename_enabled"] = "True"
+                config["encoding"]["rename_search"] = r"(?P<head>.+)(?P<resolution>1080|720|2160)(?:p|P)\.(?P<tail>.+)\.(?P<extension>\w{3})"
+                config["encoding"]["rename_replace"] = r"\g<head>720p.\g<tail>-selfmade.mkv"
+                expected_filename = "ThisIsAmazing.11.12.10.PyEncode.Is.The.Best.SEPARATOR.720p.MP4-ABC-selfmade.mkv"
+
+                ProcessRepository.processes[fake_file.id] = None
+                ProcessRepository.file_done(fake_file)
+                m_remove.assert_called_once_with(fake_file.filename)
+                m_rename.assert_called_once_with(path + os.sep + fake_file.output_filename, path + os.sep + expected_filename)
+
         return
 
     def test_stop_process(self):

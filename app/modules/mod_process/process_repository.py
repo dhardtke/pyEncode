@@ -1,3 +1,6 @@
+import os
+import re
+
 from app import socketio, db, config
 from app.library.formatters import formatted_file_data
 from app.models.file import File
@@ -111,6 +114,26 @@ class ProcessRepository:
     def file_done(file):
         # delete from "processes"
         ProcessRepository.processes.pop(file.id)
+
+        # remove original file from disk if desired
+        if config.getboolean("encoding", "delete_old_file"):
+            os.remove(file.filename)
+
+        # rename file if desired
+        if config.getboolean("encoding", "rename_enabled"):
+            rename_search = config.get("encoding", "rename_search")
+            rename_replace = config.get("encoding", "rename_replace")
+
+            # get pathinfo
+            pathinfo = os.path.split(file.filename)
+            path = pathinfo[0]
+            old_filename = pathinfo[1]
+
+            # only rename if match occurs
+            if re.match(rename_search, old_filename):
+                new_filename = re.sub(rename_search, rename_replace, old_filename)
+                # rename output_filename (created by ffmpeg, see process.py) to new_filename
+                os.rename(path + os.sep + file.output_filename, path + os.sep + new_filename)
 
         # update status to "finished"
         db.session.query(File).filter_by(id=file.id).update(dict(status=StatusMap.finished.value))

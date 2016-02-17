@@ -42,12 +42,11 @@ else:
             "show_resolution": False
         },
         "encoding": {
-            "acodec": "aac",
-            "strict": "experimental",
-            "s": "1280x720",
-            "aspect": "1280:720",
-            "preset": "slow",
-            "crf": 22
+            "parameters": "-acodec aac -strict experimental -s 1280x720 -aspect = 1280:720 -preset slow -crf 22 -f matroska -vcodec libx265",
+            "delete_old_file": False,
+            "rename_enabled": False,
+            "rename_search": "",
+            "rename_replace": ""
         }
     })
 

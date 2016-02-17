@@ -12,9 +12,31 @@ Installation
 ============
 Run `pip install -r requirements.txt` in pyEncode's root directory to install all necessary third-party requirements.
 
-Development
+Configuration
 ============
-Run `python run_dev.py` to start the socketio development server.
+In order to use pyEncode it is recommended that you create your own config file inside the data directory.
+
+Create a file called `config.ini` inside `data` with the following content:
+```INI
+[general]
+csrf_session_key = secret
+secret_key = secret
+parallel_processes = 1
+
+[filemanager]
+show_resolution = False
+
+[encoding]
+parameters = "-acodec aac -strict experimental -s 1280x720 -aspect 1280:720 -preset slow -crf 22 -f matroska -vcodec libx265"
+delete_old_file = False
+rename_enabled = True
+rename_search = ""
+rename_replace = ""
+```
+
+We advise you to change the `csrf_session_key` and `secret_key`.
+If you wish, you can change the parameters that will be passed to `ffmpeg` by using the `parameters` key inside the config file.
+Check out this site for info about all available options: https://ffmpeg.org/ffmpeg.html
 
 Deployment
 ============
@@ -29,6 +51,10 @@ Run `gunicorn -c gunicorn.conf.py app:app` to use `gunicorn.conf.py` that pyEnco
 By default this configures gunicorn to use as many worker threads as the machine running pyEncode on CPUs have.
 
 It also enables the daemon mode, so that when you start pyEncode, it is being detached into the background.
+
+Development
+============
+Run `python run_dev.py` to start the socketio development server.
 
 Running Tests
 ============
