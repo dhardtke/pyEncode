@@ -1,8 +1,9 @@
 pyEncode
 ============
-[![wercker status](https://app.wercker.com/status/bb64a538d69c241f7b4c25c32b2d1a92/m "wercker status")](https://app.wercker.com/project/bykey/bb64a538d69c241f7b4c25c32b2d1a92)
+[![Build Status](https://travis-ci.org/dhardtke/pyEncode.svg?branch=master)](https://travis-ci.org/dhardtke/pyEncode)
 
 pyEncode is a wrapper for the audio and video processor ffmpeg (https://ffmpeg.org/).
+**Warning: PyEncode is still in a very early stage and therefore only basic features are implemented!**
 
 Requirements
 ============
