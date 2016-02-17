@@ -120,3 +120,7 @@ class TestModProcess(BaseTestCase):
     def test_stop_process(self):
         # TODO
         pass
+
+    def test_ffmpeg_probe_frame_count(self):
+        # TODO
+        pass
