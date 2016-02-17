@@ -29,11 +29,11 @@ parallel_processes = 1
 show_resolution = False
 
 [encoding]
-parameters = "-acodec aac -strict experimental -s 1280x720 -aspect 1280:720 -preset slow -crf 22 -f matroska -vcodec libx265"
+parameters = -acodec aac -strict experimental -s 1280x720 -aspect 1280:720 -preset slow -crf 24 -f matroska -vcodec libx265
 delete_old_file = False
 rename_enabled = True
-rename_search = ""
-rename_replace = ""
+rename_search = (?P<head>.+)(?P<resolution>1080|720|2160)(?:p|P)\.(?P<tail>.+)\.(?P<extension>\w{3})
+rename_replace = \g<head>720p.\g<tail>-pyencode.mkv
 ```
 
 We advise you to change the `csrf_session_key` and `secret_key`.

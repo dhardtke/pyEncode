@@ -79,9 +79,9 @@ class ProcessRepository:
             process.daemon = True
 
             # todo debug
-            file.status = 0
-            db.session.commit()
-            ProcessRepository.encoding_active = False
+            # file.status = 0
+            # db.session.commit()
+            # ProcessRepository.encoding_active = False
 
             # add to "processes" dict
             ProcessRepository.processes[file.id] = process

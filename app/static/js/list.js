@@ -40,7 +40,7 @@ $(function () {
     });
 
     // file actions
-    $body.on("click", ".package .mainlist .actions a", function (e) {
+    $body.on("click", ".package .files .actions a", function (e) {
         e.preventDefault();
         e.stopPropagation();
 
