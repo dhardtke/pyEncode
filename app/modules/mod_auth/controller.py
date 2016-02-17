@@ -13,7 +13,7 @@ from .forms import LoginForm
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "mod_auth.login"
-login_manager.login_message = "You have to log in to access this page!"
+login_manager.login_message = _("You have to log in to access this page!")
 login_manager.login_message_category = "warning"
 login_manager.localize_callback = _
 
