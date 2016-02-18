@@ -102,3 +102,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# webassets
+.webassets-cache/
