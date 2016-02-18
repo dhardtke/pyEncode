@@ -50,9 +50,7 @@ Afterwards, you can use the `gunicorn.conf.py` that pyEncode comes with, or crea
 
 Run `gunicorn -c gunicorn.conf.py app:app` to use `gunicorn.conf.py` that pyEncode comes with.
 
-By default this configures gunicorn to use as many worker threads as the machine running pyEncode on CPUs have.
-
-It also enables the daemon mode, so that when you start pyEncode, it is being detached into the background.
+The config file we provide enables the daemon mode, so that when you start pyEncode, it is being detached into the background.
 
 Development
 ============

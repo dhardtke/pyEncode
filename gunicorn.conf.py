@@ -1,15 +1,10 @@
-# gunicorn WSGI server configuration.
-from multiprocessing import cpu_count
+# gunicorn WSGI server configuration
 from os import environ
 
 
-def max_workers():
-    return cpu_count()
-
-
 bind = "0.0.0.0:" + environ.get("PORT", "7000")
-max_requests = 1000
+max_requests = 0  # disable automatic worker restarts
 worker_class = "eventlet"
-workers = max_workers()
+workers = 1  # this is important, see https://flask-socketio.readthedocs.org/en/latest/#gunicorn-web-server
 daemon = True
 pidfile = "pyencode.pid"
