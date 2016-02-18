@@ -16,22 +16,25 @@ from flask.ext.babel import Babel
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
 
+# all functions in this list will be executed when our app is ready
+ready_functions = []
+
 # Define the WSGI application object
 app = Flask(__name__)
 app.config["CSRF_ENABLED"] = True
 app.config["BASE_DIR"] = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.abspath(
-    os.path.join(app.config["BASE_DIR"], "data", "app.db"))
+DATA_PATH = os.path.join(app.config["BASE_DIR"], "data")
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.abspath(os.path.join(DATA_PATH, "app.db"))
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["THREADS_PER_PAGE"] = 2  # TODO?
+app.config["THREADS_PER_PAGE"] = 1
 
 # initialize app specific config
-CONFIG_PATH = os.path.join(app.config["BASE_DIR"], "data", "config.ini")
+CONFIG_FILE = os.path.join(DATA_PATH, "config.ini")
 config = ConfigParser()
-if os.path.isfile(CONFIG_PATH):
-    config.read(CONFIG_PATH)
+if os.path.isfile(CONFIG_FILE):
+    config.read(CONFIG_FILE)
 else:
-    warnings.warn("Loading fallback config - %s does not exist!" % CONFIG_PATH, RuntimeWarning)
+    warnings.warn("Loading fallback config - %s does not exist!" % CONFIG_FILE, RuntimeWarning)
     config.read_dict({
         "general": {
             "csrf_session_key": "secret",
@@ -81,7 +84,6 @@ def get_locale():
 
     return session["language"]
 
-
 socketio = SocketIO(app)
 
 
@@ -96,12 +98,14 @@ from app.modules.mod_auth.controller import mod_auth
 from app.modules.mod_list.controller import mod_list
 from app.modules.mod_statusbar.controller import mod_statusbar
 from app.modules.mod_filemanager.controller import mod_filemanager
+from app.modules.mod_log.controller import mod_log
 
 app.register_blueprint(mod_index)
 app.register_blueprint(mod_auth)
 app.register_blueprint(mod_list)
 app.register_blueprint(mod_statusbar)
 app.register_blueprint(mod_filemanager)
+app.register_blueprint(mod_log)
 
 
 # enable foreign_keys for sqlite
@@ -112,19 +116,14 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.close()
 
 
-# Build the database
-db.create_all()
-
-# register common jinja2 functions
-from app.modules.mod_process.process_repository import ProcessRepository
-
-app.jinja_env.globals.update(count_processes_active=ProcessRepository.count_processes_active)
-app.jinja_env.globals.update(count_processes_queued=ProcessRepository.count_processes_queued)
-app.jinja_env.globals.update(count_processes_total=ProcessRepository.count_processes_total)
-app.jinja_env.globals.update(encoding_active=lambda: ProcessRepository.encoding_active)
-
-
 # run fail method when this Thread is still running and the program quits unexpectedly
 # for sig in (signal.SIGABRT, signal.SIGBREAK, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM):
 #    signal.signal(sig, ProcessRepository.file_failed(None))
 # TODO!!
+
+# Build the database
+db.create_all()
+
+# run all functions in ready_functions
+for func in ready_functions:
+    func()

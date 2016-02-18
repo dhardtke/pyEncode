@@ -11,7 +11,7 @@ from threading import Thread
 import eventlet
 from eventlet.green.subprocess import Popen
 
-from app import db, config
+from app import db, config, app
 from app.library.formatters import duration_to_seconds
 from app.models.file import File
 from app.modules.mod_process.process_repository import ProcessRepository
@@ -37,7 +37,7 @@ class Process(Thread):
         frame_count = self.ffmpeg_probe_frame_count()
 
         if frame_count == -1:
-            # app.logger.debug("Probing of " + file.filename + " failed - aborting...")
+            app.logger.debug("Probing of " + self.file.filename + " failed - aborting...")
             ProcessRepository.file_failed(self.file)
             return
 
@@ -55,14 +55,12 @@ class Process(Thread):
         cmd.extend(shlex.split(config.get("encoding", "parameters")))
         cmd.extend(["-y", path + os.sep + self.file.output_filename])
 
-        # app.logger.debug("Starting encoding of " + str(file.filename) + " with " + " ".join(map(str, cmd)))
+        app.logger.debug("Starting encoding of " + self.file.filename + " with " + " ".join(cmd))
 
         for info in self.run_ffmpeg(cmd, frame_count):
             if info["return_code"] != -1:
-                # app.logger.debug("Error occured while running ffmpeg. Last five lines of output: ")
-                # last_5 = "\n".join(total_output.splitlines()[-5:])
-                # app.logger.debug(last_5)
-                # print(info["last_lines"])
+                app.logger.debug("Error occured while running ffmpeg. Last lines of output: ")
+                app.logger.debug("\n".join(info["last_lines"]))
                 ProcessRepository.file_failed(self.file)
                 return
 
@@ -94,9 +92,6 @@ class Process(Thread):
 
             # call sleep, see https://stackoverflow.com/questions/34599578/using-popen-in-a-thread-blocks-every-incoming-flask-socketio-request
             eventlet.sleep()
-
-        # TODO logging
-        # app.logger.debug("Probing with ffprobe \"" + file.filename + "\"")
 
         fps_reg = re.findall(r"([0-9]*\.?[0-9]+) fps|tbr", output)
         if fps_reg is None:

@@ -27,7 +27,7 @@ class TestModAuth(BaseTestCase):
         self.assertIn(_("Please provide a valid password."), rv.data.decode("utf8"))
 
         # create a real user
-        user = User("admin", "webmaster@example.org", hashlib.sha256("password".encode("utf8")).hexdigest())
+        user = User("admin", "hostmaster@example.org", hashlib.sha256("password".encode("utf8")).hexdigest())
         db.session.add(user)
         db.session.commit()
 

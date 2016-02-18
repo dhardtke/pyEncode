@@ -3,19 +3,12 @@ import hashlib
 
 from flask import Blueprint, render_template, flash, request, url_for, redirect, abort, session
 from flask.ext.babel import gettext as _
-from flask.ext.login import LoginManager, login_user, login_required, logout_user, current_user
+from flask.ext.login import login_user, login_required, logout_user, current_user
 
-from app import app, db
+from app import db
 from app.models.user import User
-from .forms import LoginForm
-
-# configure Flask-Login
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = "mod_auth.login"
-login_manager.login_message = _("You have to log in to access this page!")
-login_manager.login_message_category = "warning"
-login_manager.localize_callback = _
+from app.modules.mod_auth import login_manager
+from app.modules.mod_auth.forms import LoginForm
 
 
 @login_manager.user_loader

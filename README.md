@@ -40,6 +40,10 @@ We advise you to change the `csrf_session_key` and `secret_key`.
 If you wish, you can change the parameters that will be passed to `ffmpeg` by using the `parameters` key inside the config file.
 Check out this site for info about all available options: https://ffmpeg.org/ffmpeg.html
 
+After the first start pyEncode creates an initial admin user with the username `admin` and password `admin`.
+
+Be sure to change these credentials after the first login!
+
 Deployment
 ============
 We recommend using `gunicorn` to run pyEncode:
