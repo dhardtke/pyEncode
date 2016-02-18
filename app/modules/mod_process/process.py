@@ -23,7 +23,7 @@ eventlet.monkey_patch(thread=True)
 # to match a line like
 # frame=44448 fps= 14 q=-0.0 Lsize=  247192kB time=00:30:53.95 bitrate=1092.3kbits/s speed=0.577x
 PROGRESS_PATTERN = re.compile(
-    r"frame=\s*?(\d+) fps=\s*?(\d+) q=(\-?[0-9.]+) L?size=\s*?(\d+)kB time=(.*) bitrate=\s*?([\d.]+)kbits/s speed=(\d.+)x")
+    r"frame=\s*(\d+) fps=\s*(.+) q=(.+) L?size=\s*(\d+)kB time=(.+) bitrate=\s*(.+)kbits\/s speed=(.+)x")
 
 
 class Process(Thread):
