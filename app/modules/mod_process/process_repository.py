@@ -2,7 +2,7 @@ import os
 import re
 
 from app import socketio, db, config
-from app.library.formatters import formatted_file_data
+from app.library.formatters import formatted_file_data, human_time, human_size
 from app.models.file import File
 from app.models.package import Package
 from app.modules.mod_process.file_repository import FileRepository
@@ -183,6 +183,10 @@ class ProcessRepository:
     @staticmethod
     def file_progress(file, info):
         info["id"] = file.id  # TODO nicer way of doing this
+        # format data
+        info["size"] = human_size(info["size"])
+        info["eta"] = human_time(info["eta"])
+        info["time"] = human_time(info["time"])
 
         socketio.emit("file_progress", {"data": info})
         return

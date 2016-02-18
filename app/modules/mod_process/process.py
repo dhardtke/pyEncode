@@ -23,7 +23,7 @@ eventlet.monkey_patch(thread=True)
 # to match a line like
 # frame=44448 fps= 14 q=-0.0 Lsize=  247192kB time=00:30:53.95 bitrate=1092.3kbits/s speed=0.577x
 PROGRESS_PATTERN = re.compile(
-    r"frame=\s*?(\d+) fps=\s*?(\d+) q=(\-?[0-9.]+) L?size=\s*?(\d+)kB time=(.*) bitrate=([\d.]+)kbits/s speed=(\d.+)x")
+    r"frame=\s*?(\d+) fps=\s*?(\d+) q=(\-?[0-9.]+) L?size=\s*?(\d+)kB time=(.*) bitrate=\s*?([\d.]+)kbits/s speed=(\d.+)x")
 
 
 class Process(Thread):
@@ -68,8 +68,10 @@ class Process(Thread):
 
             # store information in database
             File.query.filter_by(id=self.file.id).update(
-                dict(ffmpeg_eta=info["eta"], ffmpeg_progress=info["progress"], ffmpeg_bitrate=info["bitrate"],
-                     ffmpeg_time=info["time"], ffmpeg_size=info["size"], ffmpeg_fps=info["fps"]))
+                dict(ffmpeg_eta=info["eta"], ffmpeg_progress=info["progress"],
+                     ffmpeg_bitrate=info["bitrate"],
+                     ffmpeg_time=info["time"], ffmpeg_size=info["size"],
+                     ffmpeg_fps=info["fps"]))
             db.session.commit()
 
             # tell ProcessRepository there's some progress going on

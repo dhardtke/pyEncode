@@ -119,6 +119,9 @@ def restart_file():
 
     db.session.commit()
 
+    # check if it's necessary to start new processes
+    ProcessRepository.check_and_start_processes()
+
     return ""
 
 
