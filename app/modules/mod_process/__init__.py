@@ -11,3 +11,8 @@ def register_jinja2_functions():
     app.jinja_env.globals.update(encoding_active=lambda: ProcessRepository.encoding_active)
 
 ready_functions.append(register_jinja2_functions)
+
+# run fail method when this Thread is still running and the program quits unexpectedly
+# for sig in (signal.SIGABRT, signal.SIGBREAK, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM):
+#    signal.signal(sig, ProcessRepository.file_failed(None))
+# TODO!!
