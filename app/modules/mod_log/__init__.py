@@ -2,9 +2,9 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 
-from app import DATA_PATH, app
+from app import app
 
-LOG_FILE = os.path.join(DATA_PATH, "pyencode.log")
+LOG_FILE = os.path.join(app.config["DATA_PATH"], "pyencode.log")
 LOG_COUNT = 5
 
 # create LOG_FILE if necessary

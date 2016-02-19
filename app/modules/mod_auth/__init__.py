@@ -17,7 +17,7 @@ login_manager.localize_callback = _
 
 def create_initial_user():
     # check if there is any user in the db
-    if db.session.query(User.id).count() == 0:
+    if User.query.count() == 0:
         # create a user
         user = User(username="admin", password=hashlib.sha256("admin".encode("utf8")).hexdigest(), email="webmaster@example.org")
         user.is_admin = True

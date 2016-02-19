@@ -1,15 +1,14 @@
 from flask.ext.testing import TestCase
+import os
+
+# tell the app instance to use the config values from app.config.testing
+os.environ["PYENCODE_ADDITIONAL_CONFIG"] = "app.config.testing"
 
 from app import app, db
 
 
 class BaseTestCase(TestCase):
     def create_app(self):
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-        app.config["TESTING"] = True
-        app.config["PRESERVE_CONTEXT_ON_EXCEPTION"] = False
-        # disable CSRF checking when testing to allow form-validation testing
-        app.config["WTF_CSRF_ENABLED"] = False
         return app
 
     def setUp(self):
@@ -23,8 +22,8 @@ class BaseTestCase(TestCase):
 class NoLoginBaseTestCase(BaseTestCase):
     # disable @login_required for this test
     def create_app(self):
-        app = super().create_app()
+        _app = super().create_app()
 
-        app.config["LOGIN_DISABLED"] = True
-        app.login_manager.init_app(app)
-        return app
+        _app.config["LOGIN_DISABLED"] = True
+        _app.login_manager.init_app(_app)
+        return _app

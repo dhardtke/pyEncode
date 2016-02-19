@@ -7,7 +7,7 @@ from app.models.base_model import BaseModel
 class User(BaseModel, UserMixin):
     __tablename__ = "users"
 
-    username = db.Column(db.String(255), nullable=False)
+    username = db.Column(db.String(255), nullable=False, unique=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean())

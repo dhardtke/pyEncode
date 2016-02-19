@@ -21,15 +21,16 @@ ready_functions = []
 
 # Define the WSGI application object
 app = Flask(__name__)
-app.config["CSRF_ENABLED"] = True
-app.config["BASE_DIR"] = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-DATA_PATH = os.path.join(app.config["BASE_DIR"], "data")
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.abspath(os.path.join(DATA_PATH, "app.db"))
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["THREADS_PER_PAGE"] = 1
+
+# load default configuration from app.config.production
+app.config.from_object("app.config.production")
+# and if PYENCODE_ADDITIONAL_CONFIG is given, load config from there too
+additional_config = os.environ.get("PYENCODE_ADDITIONAL_CONFIG")
+if additional_config:
+    app.config.from_object(additional_config)
 
 # initialize app specific config
-CONFIG_FILE = os.path.join(DATA_PATH, "config.ini")
+CONFIG_FILE = os.path.join(app.config["DATA_PATH"], "config.ini")
 config = ConfigParser()
 if os.path.isfile(CONFIG_FILE):
     config.read(CONFIG_FILE)
@@ -84,6 +85,7 @@ def get_locale():
 
     return session["language"]
 
+
 socketio = SocketIO(app)
 
 
@@ -115,6 +117,14 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
 
+
+# register common jinja2 functions
+from app.modules.mod_process.process_repository import ProcessRepository
+
+app.jinja_env.globals.update(count_processes_active=ProcessRepository.count_processes_active)
+app.jinja_env.globals.update(count_processes_queued=ProcessRepository.count_processes_queued)
+app.jinja_env.globals.update(count_processes_total=ProcessRepository.count_processes_total)
+app.jinja_env.globals.update(encoding_active=lambda: ProcessRepository.encoding_active)
 
 # run fail method when this Thread is still running and the program quits unexpectedly
 # for sig in (signal.SIGABRT, signal.SIGBREAK, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM):

@@ -2,9 +2,9 @@ import hashlib
 
 from flask.ext.babel import gettext as _
 
+from tests import BaseTestCase
 from app import db
 from app.models.user import User
-from tests import BaseTestCase
 
 
 class TestModAuth(BaseTestCase):
@@ -27,12 +27,12 @@ class TestModAuth(BaseTestCase):
         self.assertIn(_("Please provide a valid password."), rv.data.decode("utf8"))
 
         # create a real user
-        user = User("admin", "hostmaster@example.org", hashlib.sha256("password".encode("utf8")).hexdigest())
+        user = User("admin2", "hostmaster@example.org", hashlib.sha256("password".encode("utf8")).hexdigest())
         db.session.add(user)
         db.session.commit()
 
         # try to login properly
-        rv = self.login("admin", "password")
+        rv = self.login(user.username, "password")
         self.assertRedirects(rv, "/")
 
         # try to logout
