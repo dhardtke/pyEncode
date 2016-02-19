@@ -89,3 +89,12 @@ filemanager.css:
     - cssmin
     - cssrewrite
   output: packed_filemanager.css
+
+log.css:
+  contents:
+    - base.css # inherit
+    - css/log.css
+  filters:
+    - cssmin
+    - cssrewrite
+  output: packed_log.css

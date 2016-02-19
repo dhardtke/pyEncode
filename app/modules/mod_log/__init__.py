@@ -4,14 +4,11 @@ from logging.handlers import RotatingFileHandler
 
 from app import app
 
-LOG_FILE = os.path.join(app.config["DATA_PATH"], "pyencode.log")
-LOG_COUNT = 5
-
 # create LOG_FILE if necessary
-if not os.path.isfile(LOG_FILE):
-    open(LOG_FILE, "a").close()
+if not os.path.isfile(app.config["LOG_FILE"]):
+    open(app.config["LOG_FILE"], "a").close()
 
-handler = RotatingFileHandler(LOG_FILE, maxBytes=1 * 1024 * 1024, backupCount=LOG_COUNT)
+handler = RotatingFileHandler(app.config["LOG_FILE"], maxBytes=1 * 1024 * 1024, backupCount=app.config["LOG_COUNT"])
 
 formatter = logging.Formatter("%(asctime)s %(levelname)s\t%(message)s", "%d.%m.%Y %H:%M:%S")
 

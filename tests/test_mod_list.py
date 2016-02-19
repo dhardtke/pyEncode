@@ -59,7 +59,7 @@ class TestModList(NoLoginBaseTestCase):
         self.assertNotIn(self.p1_file1.filename, rv.data.decode("utf8"))
 
         self.assert404(self.client.get("/list/invalid"))
-        pass
+        return
 
     def test_move_package(self):
         self.client.post("/list/move_package", data=dict(package_id=self.package1.id))

@@ -62,12 +62,12 @@
                             <i class="fa fa-fw fa-cogs"></i> {{ _("Settings") }}
                         </a>
                     </li>
-                    <li{% if request.path == url_for("log_page") %} class="active"{% endif %}>
-                        <a href="{{ url_for("log_page") }}">
+                    #}
+                    <li{% if request.path == url_for("mod_log.log_page") %} class="active"{% endif %}>
+                        <a href="{{ url_for("mod_log.log_page") }}">
                             <i class="fa fa-fw fa-file-text-o"></i> {{ _("Log") }}
                         </a>
                     </li>
-                    #}
                     <li>
                         <a href="{{ url_for("mod_auth.logout") }}">
                             <i class="fa fa-fw fa-lock"></i> {{ _("Logout") }}

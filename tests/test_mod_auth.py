@@ -2,9 +2,9 @@ import hashlib
 
 from flask.ext.babel import gettext as _
 
-from tests import BaseTestCase
 from app import db
 from app.models.user import User
+from tests import BaseTestCase
 
 
 class TestModAuth(BaseTestCase):

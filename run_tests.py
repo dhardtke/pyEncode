@@ -6,8 +6,10 @@ import unittest
 
 sys.path.append(os.path.realpath(__file__) + "/app")
 
-suite = unittest.TestLoader().discover("tests")
+# tell the app instance to use the config values from app.config.testing
+os.environ["PYENCODE_ADDITIONAL_CONFIG"] = "app.config.testing"
 
+suite = unittest.TestLoader().discover("tests")
 results = unittest.TextTestRunner(verbosity=3).run(suite)
 
 if len(results.errors) > 0 or len(results.failures) > 0:

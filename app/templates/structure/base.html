@@ -43,7 +43,9 @@
     {% include "structure/menu.html" %}
 {% endif %}
 <div class="container">
-    {% block content %}{% endblock %}
+    <div class="main">
+        {% block content %}{% endblock %}
+    </div>
 </div>
 {% if not current_user.is_anonymous and not filemanager is defined %}
     {% include "structure/statusbar.html" %}

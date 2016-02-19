@@ -1,8 +1,4 @@
 from flask.ext.testing import TestCase
-import os
-
-# tell the app instance to use the config values from app.config.testing
-os.environ["PYENCODE_ADDITIONAL_CONFIG"] = "app.config.testing"
 
 from app import app, db
 
@@ -12,6 +8,10 @@ class BaseTestCase(TestCase):
         return app
 
     def setUp(self):
+        # clear log file
+        with open(app.config["LOG_FILE"], 'w'):
+            pass
+        # recreate the db
         db.create_all()
 
     def tearDown(self):

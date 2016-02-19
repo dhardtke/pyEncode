@@ -106,14 +106,16 @@ class TestModProcess(BaseTestCase):
                 # set options we want to test
                 config["encoding"]["delete_old_file"] = "True"
                 config["encoding"]["rename_enabled"] = "True"
-                config["encoding"]["rename_search"] = r"(?P<head>.+)(?P<resolution>1080|720|2160)(?:p|P)\.(?P<tail>.+)\.(?P<extension>\w{3})"
+                config["encoding"][
+                    "rename_search"] = r"(?P<head>.+)(?P<resolution>1080|720|2160)(?:p|P)\.(?P<tail>.+)\.(?P<extension>\w{3})"
                 config["encoding"]["rename_replace"] = r"\g<head>720p.\g<tail>-selfmade.mkv"
                 expected_filename = "ThisIsAmazing.11.12.10.PyEncode.Is.The.Best.SEPARATOR.720p.MP4-ABC-selfmade.mkv"
 
                 ProcessRepository.processes[fake_file.id] = None
                 ProcessRepository.file_done(fake_file)
                 m_remove.assert_called_once_with(fake_file.filename)
-                m_rename.assert_called_once_with(path + os.sep + fake_file.output_filename, path + os.sep + expected_filename)
+                m_rename.assert_called_once_with(path + os.sep + fake_file.output_filename,
+                                                 path + os.sep + expected_filename)
 
         return
 

@@ -1,36 +1,34 @@
 {% extends "structure/base.html" %}
 {% block content %}
-    <div class="main">
-        <table class="table table-striped" id="overview">
-            <thead>
-                <tr>
-                    <th class="col-xs-6">{{ _("Name") }}</th>
-                    <th class="col-xs-1">{{ _("Information") }}</th>
-                    <th class="col-xs-2">{{ _("Bitrate") }}</th>
-                    <th class="col-xs-1">{{ _("ETA") }}</th>
-                    <th class="col-xs-2">{{ _("Progress") }}</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-        <table style="display: none;" id="template">
-            <tr data-file-id="">
-                <td class="filename">dummy.mkv</td>
-                <td class="additional_info">00:00:10 @ 10fps</td>
-                <td class="bitrate">10000 kbits/s</td>
-                <td class="eta">00:00:10</td>
-                <td class="status">10% / 10.10 MiB</td>
+    <table class="table table-striped" id="overview">
+        <thead>
+            <tr>
+                <th class="col-xs-6">{{ _("Name") }}</th>
+                <th class="col-xs-1">{{ _("Information") }}</th>
+                <th class="col-xs-2">{{ _("Bitrate") }}</th>
+                <th class="col-xs-1">{{ _("ETA") }}</th>
+                <th class="col-xs-2">{{ _("Progress") }}</th>
             </tr>
-            <tr data-file-id="">
-                <td colspan="5">
-                    <div class="progress progress-striped active">
-                        <div class="progress-bar" style="transition: none">
-                            <span>0%</span>
-                        </div>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <table style="display: none;" id="template">
+        <tr data-file-id="">
+            <td class="filename">dummy.mkv</td>
+            <td class="additional_info">00:00:10 @ 10fps</td>
+            <td class="bitrate">10000 kbits/s</td>
+            <td class="eta">00:00:10</td>
+            <td class="status">10% / 10.10 MiB</td>
+        </tr>
+        <tr data-file-id="">
+            <td colspan="5">
+                <div class="progress progress-striped active">
+                    <div class="progress-bar" style="transition: none">
+                        <span>0%</span>
                     </div>
-                </td>
-            </tr>
-        </table>
-    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
 {% endblock %}

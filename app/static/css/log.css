@@ -1,0 +1,14 @@
+.log td {
+    font-family: monospace;
+}
+
+.log td.line {
+    background-color: #eee !important;
+    text-align: right;
+}
+
+.log p {
+    margin: 0;
+    /* display white-space correctly */
+    white-space: pre-wrap;
+}

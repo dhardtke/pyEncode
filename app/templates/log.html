@@ -1,0 +1,23 @@
+{% extends "structure/base.html" %}
+{% block content %}
+    <table class="table table-striped table-condensed table-bordered log">
+        <tbody>
+        {% for entry in entries %}
+            <tr>
+                <td class="line">{{ loop.index }}</td>
+                <td class="col-xs-2">{{ entry["date"] }} {{ entry["time"] }}</td>
+                <td class="col-xs-1 text-center">{{ entry["level"] }}</td>
+                <td>
+                    <p>{{ entry["message"] }}</p>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">
+                    {{ _("The log file is empty.") }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

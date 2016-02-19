@@ -1,123 +1,121 @@
 {% extends "structure/base.html" %}
 {% block content %}
-    <div class="main">
-        <ol id="packages">
-            {% for package in packages %}
-                <li class="package" data-package-id="{{ package.id }}">
-                    <div class="heading unselectable clearfix" data-toggle="collapse"
-                         data-target="#package{{ package.id }}">
-                        <i class="fa fa-folder-o trigger"></i> <!-- trigger for dragging -->
-                        <span class="name">{{ package.title }}</span>
-						<span class="actions">
-							<a href="#" class="delete">
-								<span class="text-danger">
-									<i class="fa fa-trash-o"></i> {{ _("Delete") }}
-								</span>
-                            </a> |
-							<!--<a href="#" class="edit">
-								<span class="text-info">
-									<i class="fa fa-pencil-square-o"></i> {{ _("Edit") }}
-								</span>
-                            </a> |-->
-							<a href="#" class="restart">
-								<span class="text-primary">
-									<i class="fa fa-repeat"></i> {{ _("Restart") }}
-								</span>
-                            </a> |
-							<a href="#" class="move">
-								<span class="text-success">
-									<i class="fa fa-reply"></i> {{ _("Move") }}
-								</span>
-                            </a>
-						</span>
-                    </div>
-                    <div class="progress">
-                        <div class="progress-bar" style="width: {{ package.progress }}%;"></div>
-                        <span>{{ package.files_finished }} / {{ package.files_total }} {{ _("files") }}</span>
-                    </div>
-                    <ol class="files collapse" id="package{{ package.id }}">
-                        <!--<div class="info">
-							{{ _("Total size") }}: <strong>{{ package.size }}</strong>
-						</div>-->
-                        {% for file in package.files %}
-                            <li class="file" data-file-id="{{ file.id }}">
+    <ol id="packages">
+        {% for package in packages %}
+            <li class="package" data-package-id="{{ package.id }}">
+                <div class="heading unselectable clearfix" data-toggle="collapse"
+                     data-target="#package{{ package.id }}">
+                    <i class="fa fa-folder-o trigger"></i> <!-- trigger for dragging -->
+                    <span class="name">{{ package.title }}</span>
+                    <span class="actions">
+                        <a href="#" class="delete">
+                            <span class="text-danger">
+                                <i class="fa fa-trash-o"></i> {{ _("Delete") }}
+                            </span>
+                        </a> |
+                        <!--<a href="#" class="edit">
+                            <span class="text-info">
+                                <i class="fa fa-pencil-square-o"></i> {{ _("Edit") }}
+                            </span>
+                        </a> |-->
+                        <a href="#" class="restart">
+                            <span class="text-primary">
+                                <i class="fa fa-repeat"></i> {{ _("Restart") }}
+                            </span>
+                        </a> |
+                        <a href="#" class="move">
+                            <span class="text-success">
+                                <i class="fa fa-reply"></i> {{ _("Move") }}
+                            </span>
+                        </a>
+                    </span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ package.progress }}%;"></div>
+                    <span>{{ package.files_finished }} / {{ package.files_total }} {{ _("files") }}</span>
+                </div>
+                <ol class="files collapse" id="package{{ package.id }}">
+                    <!--<div class="info">
+                        {{ _("Total size") }}: <strong>{{ package.size }}</strong>
+                    </div>-->
+                    {% for file in package.files %}
+                        <li class="file" data-file-id="{{ file.id }}">
+                            <div class="row">
+                                {% if file.status == StatusMap.queued.value %}
+                                    {% set text_class = "text-muted" %}
+                                    {% set icon_class = "fa-clock-o" %}
+                                    {% set status_text = _("Queued") %}
+                                {% elif file.status == StatusMap.failed.value %}
+                                    {% set text_class = "text-danger" %}
+                                    {% set icon_class = "fa-times" %}
+                                    {% set status_text = _("Failed") %}
+                                {% elif file.status == StatusMap.processing.value %}
+                                    {% set text_class = "text-info" %}
+                                    {% set icon_class = "fa-film" %}
+                                    {% set status_text = _("Processing") %}
+                                {% elif file.status == StatusMap.finished.value %}
+                                    {% set text_class = "text-success" %}
+                                    {% set icon_class = "fa-check" %}
+                                    {% set status_text = _("Finished") %}
+                                {% endif %}
+                                <div class="col-lg-2 {{ text_class }} status">
+                                    <i class="fa {{ icon_class }} {{ text_class }} trigger"></i>
+                                    <!-- dragging trigger -->
+                                    {{ status_text }}
+                                </div>
+                                <div class="col-lg-10 filename">{{ file.filename }}</div>
+                            </div>
+                            <div class="sub">
                                 <div class="row">
-                                    {% if file.status == StatusMap.queued.value %}
-                                        {% set text_class = "text-muted" %}
-                                        {% set icon_class = "fa-clock-o" %}
-                                        {% set status_text = _("Queued") %}
-                                    {% elif file.status == StatusMap.failed.value %}
-                                        {% set text_class = "text-danger" %}
-                                        {% set icon_class = "fa-times" %}
-                                        {% set status_text = _("Failed") %}
-                                    {% elif file.status == StatusMap.processing.value %}
-                                        {% set text_class = "text-info" %}
-                                        {% set icon_class = "fa-film" %}
-                                        {% set status_text = _("Processing") %}
-                                    {% elif file.status == StatusMap.finished.value %}
-                                        {% set text_class = "text-success" %}
-                                        {% set icon_class = "fa-check" %}
-                                        {% set status_text = _("Finished") %}
-                                    {% endif %}
-                                    <div class="col-lg-2 {{ text_class }} status">
-                                        <i class="fa {{ icon_class }} {{ text_class }} trigger"></i>
-                                        <!-- dragging trigger -->
-                                        {{ status_text }}
+                                    <div class="col-lg-2 actions">
+                                        <a href="#" class="delete">
+                                            <span class="text-danger">
+                                                <i class="fa fa-trash-o"></i> {{ _("Delete") }}
+                                            </span>
+                                        </a>
+                                        <a href="#" class="restart">
+                                            <span class="text-primary">
+                                                <i class="fa fa-repeat"></i> {{ _("Restart") }}
+                                            </span>
+                                        </a>
                                     </div>
-                                    <div class="col-lg-10 filename">{{ file.filename }}</div>
-                                </div>
-                                <div class="sub">
-                                    <div class="row">
-                                        <div class="col-lg-2 actions">
-                                            <a href="#" class="delete">
-                                                <span class="text-danger">
-                                                    <i class="fa fa-trash-o"></i> {{ _("Delete") }}
-                                                </span>
-                                            </a>
-                                            <a href="#" class="restart">
-                                                <span class="text-primary">
-                                                    <i class="fa fa-repeat"></i> {{ _("Restart") }}
-                                                </span>
-                                            </a>
-                                        </div>
-                                        <div class="col-lg-2">
-                                            {{ file.size }}
-                                        </div>
-                                        <div class="col-lg-8">
-                                            {{ file.description }}
-                                        </div>
+                                    <div class="col-lg-2">
+                                        {{ file.size }}
+                                    </div>
+                                    <div class="col-lg-8">
+                                        {{ file.description }}
                                     </div>
                                 </div>
-                            </li>
-                        {% endfor %}
-                    </ol>
-                </li>
-            {% endfor %}
-        </ol>
-    </div>
-    <div class="modal fade" id="confirm-modal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                    <h4 class="modal-title">{{ _("Confirmation required") }}</h4>
-                </div>
-                <div class="modal-body">
-                    <span class="text hidden" data-what="delete_package">
-                        {{ _("Do you really want to delete this package?") }}
-                    </span>
-                    <span class="text hidden" data-what="restart_package">
-                        {{ _("Do you really want to restart this package?") }}
-                    </span>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal">
-                        <i class="fa fa-ban fa-fw"></i> {{ _("No") }}
-                    </button>
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fa fa-fw fa-plus"></i> {{ _("Yes") }}
-                    </button>
-                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ol>
+            </li>
+        {% endfor %}
+    </ol>
+</div>
+<div class="modal fade" id="confirm-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">{{ _("Confirmation required") }}</h4>
+            </div>
+            <div class="modal-body">
+                <span class="text hidden" data-what="delete_package">
+                    {{ _("Do you really want to delete this package?") }}
+                </span>
+                <span class="text hidden" data-what="restart_package">
+                    {{ _("Do you really want to restart this package?") }}
+                </span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">
+                    <i class="fa fa-ban fa-fw"></i> {{ _("No") }}
+                </button>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa fa-fw fa-plus"></i> {{ _("Yes") }}
+                </button>
             </div>
         </div>
     </div>
