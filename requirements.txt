@@ -20,7 +20,6 @@ pyparsing
 python-engineio
 python-socketio
 pytz
-PyYAML
 six
 speaklater
 SQLAlchemy

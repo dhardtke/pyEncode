@@ -112,6 +112,6 @@ def filemanager(path):
         else:
             parent_path = "/" + parent_path
 
-    return render_template("filemanager.html", js_name="filemanager.js", css_name="filemanager.css", config=config,
+    return render_template("filemanager.html", js_name="filemanager_js", css_name="filemanager_css", config=config,
                            breadcrumbs=breadcrumbs, filter=request_filter, files=items, filemanager=True,
                            is_windows=os.name == "nt", parent_path=parent_path, path=path, title=_("File Manager"))

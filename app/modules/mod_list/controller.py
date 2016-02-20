@@ -41,7 +41,7 @@ def show(which):
         package.progress = round((package.files_finished / (package.files_total * 1.0) * 100))
         package.size = human_size(package.size)
 
-    return render_template("list.html", packages=packages, StatusMap=StatusMap, js_name="list.js", css_name="list.css",
+    return render_template("list.html", packages=packages, StatusMap=StatusMap, js_name="list_js", css_name="list_css",
                            title=(_("Queue") if queue else _("Collector")))
 
 

@@ -60,4 +60,4 @@ def log_page():
             "message": entry_message.strip()
         })
 
-    return render_template("log.html", entries=entries, title=_("Log"), css_name="log.css")
+    return render_template("log.html", entries=entries, title=_("Log"), css_name="log_css")

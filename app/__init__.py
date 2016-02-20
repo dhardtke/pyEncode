@@ -2,19 +2,18 @@ import os
 import warnings
 from configparser import ConfigParser
 
-# Import flask and template operators
 from flask import Flask, render_template, request, session
-
-# Flask Extensions
+from flask.ext.assets import Environment
+from flask.ext.babel import Babel
 from flask.ext.compress import Compress
 from flask.ext.login import current_user
 from flask.ext.socketio import SocketIO
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.assets import Environment
-from flask.ext.babel import Babel
-
-from sqlalchemy.engine import Engine
 from sqlalchemy import event
+from sqlalchemy.engine import Engine
+from webassets.loaders import PythonLoader as PythonAssetsLoader
+
+from app import webassets
 
 # all functions in this list will be executed when our app is ready
 ready_functions = []
@@ -58,8 +57,6 @@ app.config["CSRF_SESSION_KEY"] = config["general"]["csrf_session_key"]
 app.config["SECRET_KEY"] = config["general"]["secret_key"]
 
 assets = Environment(app)
-# load asset definitions from "static/webassets.yml"
-assets.from_yaml(app.root_path + os.sep + "static" + os.sep + "webassets.yml")
 
 # use app/static/compiled as output path for webassets' assets
 assets.directory = os.path.abspath(app.root_path + os.sep + "static" + os.sep + "compiled")
@@ -67,6 +64,12 @@ assets.url = "/static/compiled"
 
 # use app/static as load path for assets
 assets.append_path(app.root_path + os.sep + "static", "static")
+
+# load asset definitions from "static/webassets.py"
+assets_loader = PythonAssetsLoader(webassets)
+bundles = assets_loader.load_bundles()
+for bundle in bundles:
+    assets.register(bundle, bundles[bundle])
 
 db = SQLAlchemy(app)
 babel = Babel(app)

@@ -7,11 +7,11 @@
 
     <title>{% if title is defined %}{{ title }}{% else %}pyEncode{% endif %}</title>
 
-    {% assets (css_name if css_name else "base.css") %}
+    {% assets (css_name if css_name else "base_css") %}
         <link rel="stylesheet" href="{{ ASSET_URL }}"/>
     {% endassets %}
 
-    {% assets (js_name if js_name else "base.js") %}
+    {% assets (js_name if js_name else "base_js") %}
         <script src="{{ ASSET_URL }}" async></script>
     {% endassets %}
 
