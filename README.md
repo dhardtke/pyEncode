@@ -44,21 +44,34 @@ After the first start pyEncode creates an initial admin user with the username `
 
 Be sure to change these credentials after the first login!
 
+Running pyEncode
+============
+You can run pyEncode using its `run.py` script:
+
+```
+nas@nas:/scripts/pyEncode$ ./run.py --help
+usage: run.py [-h] [--debug] [--daemon] [--stop] [--restart] [--port PORT]
+              [--host HOST]
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --debug      enable debug mode (default: False)
+
+daemon:
+  --daemon     run in daemon mode (default: False)
+  --stop       stop if running in daemon mode (default: False)
+  --restart    restart daemon (default: False)
+
+net:
+  --port PORT  port at which the web frontend is listening (default: 7000)
+  --host HOST  host IP under which the web front end is listening (default:
+               127.0.0.1)
+nas@nas:/scripts/pyEncode$
+```
+
 Deployment
 ============
-We recommend using `gunicorn` to run pyEncode:
-
-Install `gunicorn` using `pip install gunicorn`.
-
-Afterwards, you can use the `gunicorn.conf.py` that pyEncode comes with, or create your own.
-
-Run `gunicorn -c gunicorn.conf.py app:app` to use `gunicorn.conf.py` that pyEncode comes with.
-
-The config file we provide enables the daemon mode, so that when you start pyEncode, it is being detached into the background.
-
-Development
-============
-Run `python run_dev.py` to start the socketio development server.
+This section is still under development.
 
 Running Tests
 ============
