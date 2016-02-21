@@ -45,4 +45,8 @@ else:
     if args.daemon:
         application.start()
     else:
-        application.run()
+        # check if pyEncode is already running
+        try:
+            application.run()
+        except OSError:
+            sys.stderr.write("pyEncode is already running (maybe as daemon?)\n")

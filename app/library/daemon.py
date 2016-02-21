@@ -18,7 +18,6 @@ class Daemon:
 
     def daemonize(self):
         """Deamonize class. UNIX double fork mechanism."""
-
         try:
             pid = os.fork()
             if pid > 0:
@@ -43,6 +42,16 @@ class Daemon:
             sys.stderr.write('fork #2 failed: {0}\n'.format(err))
             sys.exit(1)
 
+        # write pidfile
+        atexit.register(self.delpid)
+
+        pid = str(os.getpid())
+        with open(self.pidfile, 'w+') as f:
+            f.write(pid + '\n')
+
+        # unfortunately, I see no better place to put this write() call
+        sys.stdout.write("pyEncode started with pid %s\n" % pid)
+
         # redirect standard file descriptors
         sys.stdout.flush()
         sys.stderr.flush()
@@ -53,13 +62,6 @@ class Daemon:
         os.dup2(si.fileno(), sys.stdin.fileno())
         os.dup2(so.fileno(), sys.stdout.fileno())
         os.dup2(se.fileno(), sys.stderr.fileno())
-
-        # write pidfile
-        atexit.register(self.delpid)
-
-        pid = str(os.getpid())
-        with open(self.pidfile, 'w+') as f:
-            f.write(pid + '\n')
 
     def delpid(self):
         os.remove(self.pidfile)
@@ -97,7 +99,7 @@ class Daemon:
 
         if not pid:
             message = "pidfile {0} does not exist. " + \
-                      "Daemon not running?\n"
+                      "pyEncode not running?\n"
             sys.stderr.write(message.format(self.pidfile))
             return  # not an error in a restart
 
@@ -110,10 +112,12 @@ class Daemon:
             e = str(err.args)
             if e.find("No such process") > 0:
                 if os.path.exists(self.pidfile):
-                    os.remove(self.pidfile)
+                    self.delpid()
             else:
                 print(str(err.args))
                 sys.exit(1)
+
+        sys.stdout.write("pyEncode stopped\n")
 
     def restart(self):
         """Restart the daemon."""
