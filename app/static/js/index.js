@@ -30,15 +30,27 @@ $(function () {
     }
 
     /**
-     * set a new progress bar value for a given file
+     * set a new progress bar value and color for a given file
      * @param $file
      * @param value
      */
     function setProgress($file, value) {
         var $progressBar = $file.parent().find(".progress-bar");
 
+        $progressBar.removeClass("progress-bar-success progress-bar-info progress-bar-warning progress-bar-danger");
+
+        if (value > 20) {
+            $progressBar.addClass("progress-bar-danger");
+        } else if (value > 40) {
+            $progressBar.addClass("progress-bar-info");
+        } else if (value > 60) {
+            $progressBar.addClass("progress-bar-warning");
+        } else if (value > 80) {
+            $progressBar.addClass("progress-bar-success");
+        }
+
         $progressBar.css("width", value + "%");
-        $progressBar.find("span").html(value + "%");
+        $progressBar.html(value + "%");
     }
 
     /**
@@ -48,7 +60,7 @@ $(function () {
         var $file = addFileToDOM(msg.data);
 
         // add back transition after transition started (only for new files)
-        setTimeout(function() {
+        setTimeout(function () {
             $file.find(".progress-bar").css("transition", "");
         }, 25);
 
