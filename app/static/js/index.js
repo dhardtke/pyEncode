@@ -21,8 +21,6 @@ $(function () {
      * @param data
      */
     function setFileData($file, data) {
-        $file.find(".progress-bar").removeAttr("style");
-
         $file.find(".additional_info").html(data.fps + " fps");
         $file.find(".eta").html(data.eta);
         $file.find(".bitrate").html(data.bitrate + " kbits/s");
@@ -48,6 +46,12 @@ $(function () {
      */
     socket.on("file_started", function (msg) {
         var $file = addFileToDOM(msg.data);
+
+        // add back transition after transition started (only for new files)
+        setTimeout(function() {
+            $file.find(".progress-bar").css("transition", "");
+        }, 25);
+
         setFileData($file, msg.data);
     });
 
@@ -72,12 +76,4 @@ $(function () {
             })
         }
     });
-
-    /**
-     * empty the file list whenever we connect to the server
-     * TODO find a way not to do this when switching between pages
-     */
-    socket.on("disconnect", function(msg) {
-        $overview.find("tbody > *").remove();
-    })
 });
