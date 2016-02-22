@@ -39,14 +39,14 @@ $(function () {
 
         $progressBar.removeClass("progress-bar-success progress-bar-info progress-bar-warning progress-bar-danger");
 
-        if (value > 20) {
-            $progressBar.addClass("progress-bar-danger");
-        } else if (value > 40) {
-            $progressBar.addClass("progress-bar-info");
+        if (value > 80) {
+            $progressBar.addClass("progress-bar-success");
         } else if (value > 60) {
             $progressBar.addClass("progress-bar-warning");
-        } else if (value > 80) {
-            $progressBar.addClass("progress-bar-success");
+        } else if (value > 40) {
+            $progressBar.addClass("progress-bar-info");
+        } else if (value > 20) {
+            $progressBar.addClass("progress-bar-danger");
         }
 
         $progressBar.css("width", value + "%");
