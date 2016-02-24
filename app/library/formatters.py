@@ -32,8 +32,7 @@ def formatted_file_data(file):
         "filename": os.path.basename(file.filename),  # show only filename, without path
         "bitrate": file.ffmpeg_bitrate,
         "fps": file.ffmpeg_fps,
-        # FIXME size is formatted incorrectly
-        "size": human_size(file.size * 1024),  # in kB, calculate bytes and format via human_size() method
+        "size": human_size(file.ffmpeg_size),  # in kB, calculate bytes and format via human_size() method
         "time": human_time(file.ffmpeg_time),
         "eta": human_time(file.ffmpeg_eta)
     }

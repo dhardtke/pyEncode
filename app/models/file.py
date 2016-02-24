@@ -13,6 +13,7 @@ class File(BaseModel):
     # foreign keys
     package_id = db.Column(db.Integer, db.ForeignKey("packages.id"))
 
+    # ffmpeg attributes
     ffmpeg_eta = db.Column(db.Float(), default=0)  # in seconds so the user can format it
     ffmpeg_progress = db.Column(db.Float(), default=0)
     ffmpeg_bitrate = db.Column(db.Float(), default=0)

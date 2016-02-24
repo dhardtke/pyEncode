@@ -7,7 +7,7 @@ from flask.ext.assets import Environment
 from flask.ext.babel import Babel
 from flask.ext.compress import Compress
 from flask.ext.login import current_user
-from flask.ext.socketio import SocketIO
+from flask.ext.socketio import SocketIO, disconnect
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
@@ -16,7 +16,9 @@ from webassets.loaders import PythonLoader as PythonAssetsLoader
 from app import webassets
 
 # all functions in this list will be executed when our app is ready
-ready_functions = []
+on_application_ready = []
+# all functions in this list will be executed when a new client connects to socketio
+on_socketio_connect = []
 
 # Define the WSGI application object
 app = Flask(__name__)
@@ -92,6 +94,18 @@ def get_locale():
 socketio = SocketIO(app)
 
 
+@socketio.on("connect")
+def disconnect_anonymous():
+    if not current_user.is_authenticated:
+        disconnect()
+        return
+
+    for func in on_socketio_connect:
+        func()
+
+    return
+
+
 @app.errorhandler(404)
 def not_found(error):
     return render_template("errors/404.html"), 404
@@ -125,5 +139,5 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
 db.create_all()
 
 # run all functions in ready_functions
-for func in ready_functions:
+for func in on_application_ready:
     func()

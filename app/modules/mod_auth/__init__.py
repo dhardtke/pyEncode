@@ -1,10 +1,10 @@
 import hashlib
 
-from flask.ext.login import LoginManager
 from flask.ext.babel import gettext as _
+from flask.ext.login import LoginManager
 
 # configure Flask-Login
-from app import app, db, socketio, ready_functions
+from app import app, db, on_application_ready
 from app.models.user import User
 
 login_manager = LoginManager()
@@ -19,9 +19,11 @@ def create_initial_user():
     # check if there is any user in the db
     if User.query.count() == 0:
         # create a user
-        user = User(username="admin", password=hashlib.sha256("admin".encode("utf8")).hexdigest(), email="webmaster@example.org")
+        user = User(username="admin", password=hashlib.sha256("admin".encode("utf8")).hexdigest(),
+                    email="webmaster@example.org")
         user.is_admin = True
         db.session.add(user)
         db.session.commit()
 
-ready_functions.append(create_initial_user)
+
+on_application_ready.append(create_initial_user)

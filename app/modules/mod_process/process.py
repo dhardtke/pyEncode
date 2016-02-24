@@ -65,15 +65,22 @@ class Process(Thread):
                 return
 
             # store information in database
-            File.query.filter_by(id=self.file.id).update(
-                dict(ffmpeg_eta=info["eta"], ffmpeg_progress=info["progress"],
-                     ffmpeg_bitrate=info["bitrate"],
-                     ffmpeg_time=info["time"], ffmpeg_size=info["size"],
-                     ffmpeg_fps=info["fps"]))
+            # convert kB to bytes
+            info["ffmpeg_size"] *= 1024
+
+            # we don't need the return_code anymore (and don't want to store it)
+            info.pop("return_code")
+
+            # update file in DB
+            File.query.filter_by(id=self.file.id).update(info)
             db.session.commit()
 
+            # update self.file
+            for k in info:
+                setattr(self.file, k, info[k])
+
             # tell ProcessRepository there's some progress going on
-            ProcessRepository.file_progress(self.file, info)
+            ProcessRepository.file_progress(self.file)
 
         if self.active:
             ProcessRepository.file_done(self.file)
@@ -143,8 +150,8 @@ class Process(Thread):
                 frames_remaining = frame_count - frame  # needed for eta
                 eta = frames_remaining / fps if fps != 0 else -1  # in seconds
 
-                yield {"return_code": -1, "eta": eta, "progress": progress, "bitrate": bitrate, "time": time,
-                       "size": size, "fps": fps}
+                yield {"return_code": -1, "ffmpeg_eta": eta, "ffmpeg_progress": progress, "ffmpeg_bitrate": bitrate,
+                       "ffmpeg_time": time, "ffmpeg_size": size, "ffmpeg_fps": fps}
 
         return_code = instance.wait()
         if return_code != 0:

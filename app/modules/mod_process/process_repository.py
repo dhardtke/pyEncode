@@ -1,7 +1,7 @@
 import os
 import re
 
-from app import socketio, db, config
+from app import db, config, socketio
 from app.library.formatters import formatted_file_data, human_time, human_size
 from app.models.file import File
 from app.models.package import Package
@@ -22,7 +22,7 @@ class ProcessRepository:
     def set_encoding_active(new_state):
         ProcessRepository.encoding_active = new_state
 
-        # fire event
+        # notify client
         socketio.emit("active_changed", {"active": new_state})
 
         # check if it's necessary to start new processes
@@ -181,12 +181,9 @@ class ProcessRepository:
         return
 
     @staticmethod
-    def file_progress(file, info):
-        info["id"] = file.id  # TODO nicer way of doing this
+    def file_progress(file):
         # format data
-        info["size"] = human_size(info["size"])
-        info["eta"] = human_time(info["eta"])
-        info["time"] = human_time(info["time"])
+        info = formatted_file_data(file)
 
         socketio.emit("file_progress", {"data": info})
         return

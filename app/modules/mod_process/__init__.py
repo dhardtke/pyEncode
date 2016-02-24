@@ -1,4 +1,4 @@
-from app import ready_functions, app
+from app import on_application_ready, app
 
 
 def register_jinja2_functions():
@@ -10,7 +10,8 @@ def register_jinja2_functions():
     app.jinja_env.globals.update(count_processes_total=ProcessRepository.count_processes_total)
     app.jinja_env.globals.update(encoding_active=lambda: ProcessRepository.encoding_active)
 
-ready_functions.append(register_jinja2_functions)
+
+on_application_ready.append(register_jinja2_functions)
 
 # run fail method when this Thread is still running and the program quits unexpectedly
 # for sig in (signal.SIGABRT, signal.SIGBREAK, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM):
