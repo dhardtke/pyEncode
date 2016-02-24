@@ -1,6 +1,8 @@
-/* enforce vertical scrollbar */
 body {
+    /* enforce vertical scrollbar */
     overflow-y: scroll;
+    /* avoid .navbar-fixed-bottom overlaying page content */
+    padding-bottom: 65px;
 }
 
 label {
