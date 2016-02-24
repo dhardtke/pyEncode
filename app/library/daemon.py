@@ -50,7 +50,7 @@ class Daemon:
             f.write(pid + '\n')
 
         # unfortunately, I see no better place to put this write() call
-        sys.stdout.write("pyEncode started with pid %s\n" % pid)
+        sys.stdout.write("pyEncode started with PID %s\n" % pid)
 
         # redirect standard file descriptors
         sys.stdout.flush()
