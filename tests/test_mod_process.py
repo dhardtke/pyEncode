@@ -55,7 +55,7 @@ class TestModProcess(BaseTestCase):
     @patch("app.modules.mod_process.process.Process.ffmpeg_probe_frame_count", return_value=10)
     def test_check_and_start_processes(self, mock_probe, mock_run):
         def mocked_run_ffmpeg(cmd, frame_count):
-            yield {"return_code": -1, "eta": 1, "progress": 0, "bitrate": 0, "time": 0, "size": 0, "fps": 0}
+            yield {"return_code": -1, "ffmpeg_eta": 1, "ffmpeg_progress": 0, "ffmpeg_bitrate": 0, "ffmpeg_time": 0, "ffmpeg_size": 0, "ffmpeg_fps": 0}
 
         # mock run_ffmpeg()
         mock_run.side_effect = mocked_run_ffmpeg

@@ -96,7 +96,7 @@ socketio = SocketIO(app)
 
 @socketio.on("connect")
 def disconnect_anonymous():
-    if not current_user.is_authenticated:
+    if False and not current_user.is_authenticated:
         disconnect()
         return
 
