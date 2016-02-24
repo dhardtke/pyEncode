@@ -6,7 +6,7 @@ import sys
 from app.library.daemon import Daemon
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument("--debug", help="enable debug mode", action="store_true", default=False)
+parser.add_argument("--debug", help="enable debug mode (does not work with daemon mode)", action="store_true", default=False)
 
 daemon_group = parser.add_argument_group("daemon")
 daemon_group.add_argument("--daemon", help="run in daemon mode", action="store_true", default=False)
