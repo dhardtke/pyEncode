@@ -1,7 +1,9 @@
 import os
+from math import ceil
 
-from flask import render_template, Blueprint
+from flask import render_template, Blueprint, abort
 from flask.ext.login import login_required
+from flask.ext.sqlalchemy import Pagination
 from flask_babel import gettext as _
 
 from app import app
@@ -10,8 +12,9 @@ mod_log = Blueprint("mod_log", __name__, url_prefix="/log")
 
 
 @login_required
-@mod_log.route("/", methods=["GET"])
-def log_page():
+@mod_log.route("/", defaults={"page": 1}, methods=["GET"])
+@mod_log.route("/page/<int:page>", methods=["GET"])
+def log_page(page):
     # read all log files into one variable
     content = ""
     i = 0
@@ -34,10 +37,9 @@ def log_page():
 
     lines = content.split("\n")
 
-    for i, line in enumerate(lines):
-        # delete empty lines
+    for line in lines:
+        # skip empty lines
         if len(line) == 0:
-            del lines[i]
             continue
 
         line = line.strip()
@@ -60,4 +62,22 @@ def log_page():
             "message": entry_message.strip()
         })
 
-    return render_template("log.html", entries=entries, title=_("Log"), css_name="log_css")
+    # show newest entries first
+    entries.reverse()
+
+    # pagination configuration
+    per_page = 10
+    total = len(entries)
+
+    # check if we're out of bounds (page is greater than the highest page number)
+    if page != 1 and page > ceil(total / per_page):
+        abort(404)
+
+    # slice entries appropriately
+    offset = page * per_page - per_page
+    cur_page_entries = entries[offset: offset + per_page]
+
+    pagination = Pagination(None, page, per_page, total, cur_page_entries)
+
+    return render_template("log.html", offset=offset, cur_page_entries=cur_page_entries, title=_("Log"), css_name="log_css",
+                           pagination=pagination)
