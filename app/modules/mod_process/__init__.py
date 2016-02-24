@@ -1,7 +1,7 @@
 import atexit
 
 from app import on_application_ready, app
-from mod_process.process_repository import ProcessRepository
+from app.modules.mod_process.process_repository import ProcessRepository
 
 
 def register_jinja2_functions():
