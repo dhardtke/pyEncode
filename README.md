@@ -19,6 +19,7 @@ Configuration
 In order to use pyEncode it is recommended that you create your own config file inside the data directory.
 
 Create a file called `config.ini` inside `data` with the following content:
+
 ```INI
 [general]
 csrf_session_key = secret
@@ -48,7 +49,7 @@ Running pyEncode
 ============
 You can run pyEncode using its `run.py` script:
 
-```
+```Shell
 nas@nas:/scripts/pyEncode$ ./run.py --help
 usage: run.py [-h] [--debug] [--daemon] [--stop] [--restart] [--port PORT]
               [--host HOST]
@@ -71,7 +72,49 @@ nas@nas:/scripts/pyEncode$
 
 Deployment
 ============
-This section is still under development.
+## nginx
+Use this config for your vhost to configure nginx as WebSocket Reverse Proxy:
+
+```
+server {
+    # change to port 80 for http instead of https
+    listen 443;
+    server_name pyencode.example.org;
+    access_log /var/log/nginx/example.log;
+    
+    # SSL configuration
+    ssl on;
+    ssl_dhparam /etc/ssl/certs/dhparam.pem;
+    ssl_certificate /etc/letsencrypt/live/pyencode.example.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/pyencode.example.org/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_redirect off;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /socket.io {
+        proxy_pass http://127.0.0.1:5000/socket.io;
+        proxy_redirect off;
+        proxy_buffering off;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+    }
+}
+```
+
+## Apache
+Coming Soon!
 
 Running Tests
 ============
