@@ -55,7 +55,7 @@ class Process(Thread):
         cmd.extend(shlex.split(config.get("encoding", "parameters")))
         cmd.extend(["-y", path + os.sep + self.file.output_filename])
 
-        app.logger.debug("Starting encoding of " + self.file.filename + " with " + " ".join(cmd))
+        app.logger.debug("Starting encoding of " + self.file.filename + " with %s" % " ".join(cmd))
 
         for info in self.run_ffmpeg(cmd, frame_count):
             if info["return_code"] != -1:

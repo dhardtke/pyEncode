@@ -1,8 +1,8 @@
 import os
 import re
 
-from app import db, config, socketio
-from app.library.formatters import formatted_file_data, human_time, human_size
+from app import db, config, socketio, app
+from app.library.formatters import formatted_file_data
 from app.models.file import File
 from app.models.package import Package
 from app.modules.mod_process.file_repository import FileRepository
@@ -151,6 +151,8 @@ class ProcessRepository:
                 "count_total": ProcessRepository.count_processes_total(),
             }
         })
+
+        app.logger.debug("Done with encoding of %s" % file.filename)
 
         return
 
