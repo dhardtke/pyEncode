@@ -13,6 +13,11 @@ from app.modules.mod_auth.forms import LoginForm
 
 @login_manager.user_loader
 def load_user(user_id):
+    """
+    load a User by a given user id
+    :param user_id: the User's id
+    :return: the User or None
+    """
     return User.query.get(user_id)
 
 
@@ -21,6 +26,11 @@ mod_auth = Blueprint("mod_auth", __name__, url_prefix="/auth")
 
 @mod_auth.route("/login", methods=["GET", "POST"])
 def login():
+    """
+    show log in page or log in a User
+    :return: the log in page or redirect to the index page
+    """
+
     # don't allow login when User is logged in already
     if current_user.is_authenticated:
         return redirect(url_for("mod_index.index"))
@@ -43,12 +53,22 @@ def login():
 @mod_auth.route("/logout")
 @login_required
 def logout():
+    """
+    logout the current User
+    :return: redirect to login
+    """
     logout_user()
     return redirect(url_for("mod_auth.login"))
 
 
 @mod_auth.route("/lang/<string:language>")
 def set_language(language):
+    """
+    set a new language as active for the currently logged in User
+    :param language: the new language
+    :return: redirect to referrer
+    """
+
     if language in ("de", "en"):
         # only store language in database when the User is logged in
         if current_user.is_authenticated:

@@ -16,6 +16,10 @@ login_manager.localize_callback = _
 
 
 def create_initial_user():
+    """
+    create an initial User if there is none yet
+    """
+
     # check if there is any user in the db
     if User.query.count() == 0:
         # create a user

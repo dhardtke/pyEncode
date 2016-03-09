@@ -18,6 +18,12 @@ mod_filemanager = Blueprint("mod_filemanager", __name__, url_prefix="/filemanage
 @mod_filemanager.route("/<path:path>", methods=["GET", "POST"])
 @login_required
 def filemanager(path):
+    """
+    show the filemanager page for a given path
+    :param path: the path
+    :return: filemanager page for the given path
+    """
+
     # always prepend the root if we're not in it yet
     if path != "/" and os.name != "nt":
         path = "/" + path

@@ -5,6 +5,9 @@ from app.modules.mod_process.process_repository import ProcessRepository
 
 
 def register_jinja2_functions():
+    """
+    register count_process_* and encoding_active() functions for jinja2
+    """
     from app.modules.mod_process.process_repository import ProcessRepository
 
     app.jinja_env.globals.update(count_processes_active=ProcessRepository.count_processes_active)
@@ -14,6 +17,9 @@ def register_jinja2_functions():
 
 
 def fail_on_exit():
+    """
+    on exit cancel all processes
+    """
     ProcessRepository.cancel_all_processes()
 
 

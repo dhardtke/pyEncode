@@ -33,6 +33,9 @@ class Process(Thread):
         self.active = True
 
     def run(self):
+        """
+        run the encoding
+        """
         # probe file first
         frame_count = self.ffmpeg_probe_frame_count()
 
@@ -84,13 +87,11 @@ class Process(Thread):
 
         if self.active:
             ProcessRepository.file_done(self.file)
-        return
-
-    """
-        probe self.file and return frame count
-    """
 
     def ffmpeg_probe_frame_count(self):
+        """
+        probe self.file and return frame count
+        """
         instance = Popen(["ffprobe", self.file.filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         output = ""
@@ -114,10 +115,18 @@ class Process(Thread):
         return frame_count
 
     def stop(self):
+        """
+        stop this process
+        """
         self.active = False
-        return
 
     def run_ffmpeg(self, cmd, frame_count):
+        """
+        run ffmpeg with given cmd arguments and a frame count
+        :param cmd: the command line dictionary containing all the arguments
+        :param frame_count: the amount of frames of this video, necessary for the progress calculation
+        :return:
+        """
         instance = Popen(map(str, cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         reader = io.TextIOWrapper(instance.stderr, encoding="utf8")
 

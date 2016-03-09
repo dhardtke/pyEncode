@@ -25,6 +25,10 @@ class File(BaseModel):
         return "<File %r>" % self.id
 
     def clear(self):
+        """
+        clear all ffmpeg fields
+        """
+
         self.ffmpeg_progress = 0
         self.ffmpeg_eta = 0
         self.ffmpeg_bitrate = 0

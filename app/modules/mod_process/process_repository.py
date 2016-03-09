@@ -20,6 +20,11 @@ class ProcessRepository:
 
     @staticmethod
     def set_encoding_active(new_state):
+        """
+        change the state of whether encoding should be active or not to a new state
+        :param new_state: should the encoding be active now
+        """
+
         ProcessRepository.encoding_active = new_state
 
         # notify client
@@ -30,12 +35,14 @@ class ProcessRepository:
 
     @staticmethod
     def cancel_all_processes():
+        """
+        cancel all currently running Processes
+        """
+
         # iterate over a copy of processes because cancel_process modifies the dictionary
         # while we are iterating over it
         for file_id in ProcessRepository.processes.copy():
             ProcessRepository.cancel_process(file_id)
-
-        return
 
     @staticmethod
     def is_running(file_id):
@@ -43,6 +50,11 @@ class ProcessRepository:
 
     @staticmethod
     def cancel_process(file_id):
+        """
+        cancel a specific Process
+        :param file_id: the id of the file corresponding to the Process
+        """
+
         # stop thread
         ProcessRepository.processes[file_id].stop()
         # update status
@@ -57,10 +69,12 @@ class ProcessRepository:
         # remove from processes dict
         ProcessRepository.processes.pop(file_id)
 
-        return
-
     @staticmethod
     def check_and_start_processes():
+        """
+        check if it's required to start new Processes and do so if needed
+        """
+
         while ProcessRepository.encoding_active:
             # grab next potential file to process
             file = FileRepository.get_queued_query().order_by(Package.position.asc(), File.position.asc()).first()
@@ -96,22 +110,37 @@ class ProcessRepository:
 
     @staticmethod
     def count_processes_active():
+        """
+        :return: the amount of processes currently active
+        """
+
         return len(ProcessRepository.processes)
 
     @staticmethod
     def count_processes_queued():
+        """
+        :return: the amount of Files currently queued
+        """
+
         return FileRepository.get_queued_query().count()
 
     @staticmethod
     def count_processes_total():
-        # count all files that are in packages that are queued
+        """
+        :return: count of all Files that are in packages that are queued
+        """
+
         # return ProcessRepository.count_processes_active() + ProcessRepository.count_processes_queued()
         return Package.query.filter_by(queue=True).join(File).count()
         # TODO
 
-    # file_done() will be called whenever a Process is finished
     @staticmethod
     def file_done(file):
+        """
+        will be called whenever a Process is finished
+        :param file: the File object of the File that is done
+        """
+
         # delete from "processes"
         ProcessRepository.processes.pop(file.id)
 
@@ -154,10 +183,13 @@ class ProcessRepository:
 
         app.logger.debug("Done with encoding of %s" % file.filename)
 
-        return
-
     @staticmethod
     def file_failed(file):
+        """
+        will be called whenever a File fails
+        :param file: the File object of the File that has failed
+        """
+
         # delete from "processes"
         ProcessRepository.processes.pop(file.id)
 
@@ -180,12 +212,14 @@ class ProcessRepository:
             }
         })
 
-        return
-
     @staticmethod
     def file_progress(file):
+        """
+        will be called whenever a file makes progress
+        :param file: the File object of the File that has made progress
+        """
+
         # format data
         info = formatted_file_data(file)
 
         socketio.emit("file_progress", {"data": info})
-        return

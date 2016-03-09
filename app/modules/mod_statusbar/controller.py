@@ -17,6 +17,11 @@ mod_statusbar = Blueprint("mod_statusbar", __name__, url_prefix="/statusbar")
 @mod_statusbar.route("/toggle", methods=["POST"])
 @login_required
 def toggle_encoding_active():
+    """
+    toggle the current encoding active status (from either True to False and vice-versa)
+    :return: ""
+    """
+
     ProcessRepository.set_encoding_active(not ProcessRepository.encoding_active)
     return ""
 
@@ -24,6 +29,11 @@ def toggle_encoding_active():
 @mod_statusbar.route("/cancel", methods=["POST"])
 @login_required
 def cancel_processes():
+    """
+    cancel all currently running Processes and check for new processes
+    :return: ""
+    """
+
     ProcessRepository.cancel_all_processes()
 
     # after cancelling check if it's necessary to start new processes
@@ -34,6 +44,11 @@ def cancel_processes():
 @mod_statusbar.route("/add", methods=["POST"])
 @login_required
 def add_package():
+    """
+    add a new Package
+    :return: "1"
+    """
+
     i = 0
     paths = json.loads(request.form["paths"])
     for path in paths:

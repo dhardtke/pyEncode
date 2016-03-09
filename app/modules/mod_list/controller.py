@@ -17,6 +17,12 @@ mod_list = Blueprint("mod_list", __name__, url_prefix="/list")
 @mod_list.route("/<string:which>")
 @login_required
 def show(which):
+    """
+    show the list page
+    :param which: what list page to show: queue or collector
+    :return: the list page
+    """
+
     if which != "collector" and which != "queue":
         abort(404)
 
@@ -48,6 +54,11 @@ def show(which):
 @mod_list.route("/move_package", methods=["POST"])
 @login_required
 def move_package():
+    """
+    move a Package from queue to collector and vice-versa
+    :return: ""
+    """
+
     package_id = request.form["package_id"]
 
     package = Package.query.filter_by(id=package_id).first()
@@ -74,6 +85,11 @@ def move_package():
 @mod_list.route("/restart_package", methods=["POST"])
 @login_required
 def restart_package():
+    """
+    restart a Package
+    :return: ""
+    """
+
     package_id = request.form["package_id"]
 
     package = Package.query.filter_by(id=package_id).first()
@@ -102,6 +118,11 @@ def restart_package():
 @mod_list.route("/restart_file", methods=["POST"])
 @login_required
 def restart_file():
+    """
+    restart a File
+    :return: ""
+    """
+
     file_id = request.form["file_id"]
 
     file = File.query.filter_by(id=file_id).first()
@@ -128,6 +149,11 @@ def restart_file():
 @mod_list.route("/delete_package", methods=["POST"])
 @login_required
 def delete_package():
+    """
+    delete a Package
+    :return: ""
+    """
+
     package_id = request.form["package_id"]
 
     package = Package.query.filter_by(id=package_id).first()
@@ -154,6 +180,11 @@ def delete_package():
 @mod_list.route("/delete_file", methods=["POST"])
 @login_required
 def delete_file():
+    """
+    delete a File
+    :return: ""
+    """
+
     file_id = request.form["file_id"]
     file = File.query.filter_by(id=file_id).first()
 
@@ -176,6 +207,11 @@ def delete_file():
 @mod_list.route("/update_order", methods=["POST"])
 @login_required
 def update_order():
+    """
+    update the order of a Package or a File
+    :return: ""
+    """
+
     which = request.form["which"]  # "package" or "file"
 
     if which != "package" and which != "file":

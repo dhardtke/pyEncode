@@ -15,16 +15,20 @@ mod_log = Blueprint("mod_log", __name__, url_prefix="/log")
 @mod_log.route("/", defaults={"page": 1}, methods=["GET"])
 @mod_log.route("/page/<int:page>", methods=["GET"])
 def log_page(page):
-    # read all log files into one variable
+    """
+
+    :param page: the page we are currently on
+    :return: the log page
+    """
+
+    # read all log files into this variable
     content = ""
-    i = 0
-    while i < app.config["LOG_COUNT"]:
+    for i in range(0, app.config["LOG_COUNT"]):
         file = app.config["LOG_FILE"]
 
         # add suffix if necessary
         if i != 0:
             file += "." + str(i)
-        i += 1
 
         # only read file if it exists
         if not os.path.isfile(file):
