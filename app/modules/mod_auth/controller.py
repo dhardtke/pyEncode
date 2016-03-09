@@ -7,19 +7,7 @@ from flask.ext.login import login_user, login_required, logout_user, current_use
 
 from app import db
 from app.models.user import User
-from app.modules.mod_auth import login_manager
 from app.modules.mod_auth.forms import LoginForm
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    """
-    load a User by a given user id
-    :param user_id: the User's id
-    :return: the User or None
-    """
-    return User.query.get(user_id)
-
 
 mod_auth = Blueprint("mod_auth", __name__, url_prefix="/auth")
 
