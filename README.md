@@ -138,6 +138,8 @@ WantedBy=multi-user.target
 
 You might need to adjust the paths.
 
+If you want pyEncode to run automatically when starting your system you need to run `systemctl enable pyencode`.
+
 Running Tests
 ============
 Run `python run_tests.py` in the root folder where the `app` subdirectory resides.
