@@ -116,6 +116,28 @@ server {
 ## Apache
 Coming Soon!
 
+## systemd
+You can use this unit configuration file:
+Save it to /lib/systemd/system/pyencode.service for instance:
+```
+[Unit]
+Description=pyEncode
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/pyEncode/run.py --daemon
+ExecStop=/usr/bin/python3 /opt/pyEncode/run.py --stop
+RemainAfterExit=yes
+User=nas
+Group=nas
+
+[Install]
+WantedBy=multi-user.target
+```
+
+You might need to adjust the paths.
+
 Running Tests
 ============
 Run `python run_tests.py` in the root folder where the `app` subdirectory resides.
