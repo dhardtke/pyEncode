@@ -22,8 +22,7 @@ eventlet.monkey_patch(thread=True)
 # the pattern to fetch meta information of the current progress
 # to match a line like
 # frame=44448 fps= 14 q=-0.0 Lsize=  247192kB time=00:30:53.95 bitrate=1092.3kbits/s speed=0.577x
-PROGRESS_PATTERN = re.compile(
-    r"frame=\s*(\d+) fps=\s*(.+) q=(.+) L?size=\s*(\d+)kB time=(.+) bitrate=\s*(.+)kbits/s speed=(.+)x")
+PROGRESS_PATTERN = re.compile(r"frame=\s*(\d+) fps=\s*(.+) q=(.+) L?size=\s*(\d+)kB time=(.+) bitrate=\s*(.+)kbits/s(?:P speed=(.+)x)?")
 
 
 class Process(Thread):
@@ -145,6 +144,7 @@ class Process(Thread):
             # append current line to last_lines
             last_lines.append(line)
 
+            print(line)
             match = PROGRESS_PATTERN.match(line)
 
             # first few lines have no match
