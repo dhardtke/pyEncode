@@ -144,7 +144,6 @@ class Process(Thread):
             # append current line to last_lines
             last_lines.append(line)
 
-            print(line)
             match = PROGRESS_PATTERN.match(line)
 
             # first few lines have no match
